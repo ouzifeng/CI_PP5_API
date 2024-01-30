@@ -84,17 +84,18 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
     'default': {
-        'ENGINE': config('DB_ENGINE'),
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST'),
-        'PORT': config('DB_PORT'),
+        'ENGINE': config('DB_ENGINE').strip(),
+        'NAME': config('DB_NAME').strip(),
+        'USER': config('DB_USER').strip(),
+        'PASSWORD': config('DB_PASSWORD').strip(),
+        'HOST': config('DB_HOST').strip(),
+        'PORT': config('DB_PORT').strip(),
         'OPTIONS': {
-            'sslmode': config('DB_OPTIONS_SSLMODE')
+            'sslmode': config('DB_OPTIONS_SSLMODE').strip()
         },
     }
 }
+
 
 
 # Password validation
