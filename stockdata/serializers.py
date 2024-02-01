@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import General, Highlights, Valuation, Technicals, SplitsDividends, AnalystRatings, Description, IncomeStatement, CAGR, CashFlow, BalanceSheet
+from django.contrib.auth.models import User
 
 class IncomeStatementSerializer(serializers.ModelSerializer):
     class Meta:
