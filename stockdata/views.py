@@ -1,3 +1,4 @@
+from django.db.models import Q
 from rest_framework import generics, status, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -94,3 +95,14 @@ class FollowedStocksList(generics.ListAPIView):
         user = self.request.user
         return General.objects.filter(followers=user)
     
+    
+class StockSearchView(generics.ListAPIView):
+    serializer_class = GeneralSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        queryset = General.objects.all()
+        query = self.request.query_params.get('query', None)
+        if query is not None:
+            queryset = queryset.filter(Q(code__icontains=query) | Q(name__icontains=query))
+        return queryset    
