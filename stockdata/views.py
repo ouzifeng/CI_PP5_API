@@ -2,8 +2,10 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from .models import General
-from .serializers import GeneralSerializer
+from .models import General, Note
+from .serializers import GeneralSerializer, NoteSerializer
+from .permissions import IsOwnerOrReadOnly
+
 
 class StockDetailView(generics.RetrieveAPIView):
     queryset = General.objects.all()
@@ -59,3 +61,17 @@ def toggle_follow_stock(request, primary_ticker):
         action = 'followed'
 
     return Response({"status": "ok", "action": action})
+
+
+class NoteListCreate(generics.ListCreateAPIView):
+    queryset = Note.objects.all()
+    serializer_class = NoteSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class NoteDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Note.objects.all()
+    serializer_class = NoteSerializer
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]

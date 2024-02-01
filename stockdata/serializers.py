@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import General, Highlights, Valuation, Technicals, SplitsDividends, AnalystRatings, Description, IncomeStatement, CAGR, CashFlow, BalanceSheet
+from .models import General, Highlights, Valuation, Technicals, SplitsDividends, AnalystRatings, Description, IncomeStatement, CAGR, CashFlow, BalanceSheet, Note
 from django.contrib.auth.models import User
 
 class IncomeStatementSerializer(serializers.ModelSerializer):
@@ -68,6 +68,12 @@ class GeneralSerializer(serializers.ModelSerializer):
     class Meta:
         model = General
         fields = '__all__'
+        
+        
+class NoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Note
+        fields = ['id', 'user', 'stock', 'content', 'created_at', 'updated_at']        
 
         
         
