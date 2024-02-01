@@ -1,8 +1,9 @@
-from django.shortcuts import render
-from rest_framework import generics
-from .models import General
-from .serializers import GeneralSerializer, HighlightSerializer, ValuationSerializer, TechnicalsSerializer, SplitsDividendsSerializer, AnalystRatingsSerializer, DescriptionSerializer, IncomeStatementSerializer, CagrSerializer
+from rest_framework import generics, status
 from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from .models import General
+from .serializers import GeneralSerializer
 
 class StockDetailView(generics.RetrieveAPIView):
     queryset = General.objects.all()
@@ -37,3 +38,24 @@ class StockDetailView(generics.RetrieveAPIView):
         data['is_following'] = is_following
         
         return Response(data)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def toggle_follow_stock(request, primary_ticker):
+    try:
+        stock = General.objects.get(primary_ticker=primary_ticker)
+    except General.DoesNotExist:
+        return Response({"error": "Stock not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    user = request.user
+
+    if stock.followers.filter(id=user.id).exists():
+        # User is already following the stock, so unfollow
+        stock.followers.remove(user)
+        action = 'unfollowed'
+    else:
+        # User is not following the stock, so follow
+        stock.followers.add(user)
+        action = 'followed'
+
+    return Response({"status": "ok", "action": action})
