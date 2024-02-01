@@ -71,9 +71,12 @@ class GeneralSerializer(serializers.ModelSerializer):
         
         
 class NoteSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+
     class Meta:
         model = Note
-        fields = ['id', 'user', 'stock', 'content', 'created_at', 'updated_at']        
+        fields = ['id', 'user', 'stock', 'content', 'created_at', 'updated_at']
+
 
         
         

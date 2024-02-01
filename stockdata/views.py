@@ -69,6 +69,7 @@ class NoteListCreate(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
+        print("Received data for new note:", serializer.validated_data)
         serializer.save(user=self.request.user)
 
 class NoteDetail(generics.RetrieveUpdateDestroyAPIView):
