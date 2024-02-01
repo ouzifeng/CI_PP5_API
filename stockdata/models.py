@@ -894,3 +894,15 @@ class CAGR(models.Model):
 
     def __str__(self):
         return f"CAGR for {self.general.name} ({self.general.code})"
+    
+    
+class Note(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user_notes')
+    stock = models.ForeignKey(General, on_delete=models.CASCADE, related_name='stock_notes')
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Note by {self.user.username} on {self.stock.name}"
+    
