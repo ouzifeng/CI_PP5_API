@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 class General(models.Model):
     code = models.CharField(max_length=20)
@@ -25,6 +26,11 @@ class General(models.Model):
     web_url = models.URLField(null=True, blank=True)
     logo_url = models.URLField(null=True, blank=True)
     full_time_employees = models.IntegerField(null=True, blank=True)
+    followers = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, 
+        related_name='followed_stocks', 
+        blank=True
+    )
     updated_at = models.DateField(null=True, blank=True)
 
     def __str__(self):
