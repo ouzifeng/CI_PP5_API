@@ -44,8 +44,19 @@ INSTALLED_APPS = [
     "rest_framework",
     'rest_framework.authtoken',
     'dj_rest_auth',
-    'usermanagement'    
+    'usermanagement',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',        
 ]
+
+# Authentication Backends
+AUTHENTICATION_CLASSES = (
+    'allauth.account.auth_backends.AuthenticationBackend',
+    'dj_rest_auth.authentication.AllAuthJWTAuthentication',    
+)
+
+REST_USE_JWT = True
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -56,7 +67,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
-    "django.middleware.common.CommonMiddleware",    
+    "django.middleware.common.CommonMiddleware",
+    "allauth.account.middleware.AccountMiddleware",    
 ]
 
 ROOT_URLCONF = "config.urls"

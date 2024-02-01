@@ -6,4 +6,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('api/stocks/<str:primary_ticker>/', StockDetailView.as_view(), name='stock_detail'),
     path('auth/', include('dj_rest_auth.urls')),
+    path('api/user/', include('usermanagement.urls')),
 ]
