@@ -76,6 +76,13 @@ class NoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Note
         fields = ['id', 'user', 'stock', 'content', 'created_at', 'updated_at']
+        
+        
+class StockSearchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = General
+        fields = ('code', 'name')
+        
 
 
         

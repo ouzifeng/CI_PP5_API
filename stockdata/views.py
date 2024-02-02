@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from .models import General, Note
-from .serializers import GeneralSerializer, NoteSerializer
+from .serializers import GeneralSerializer, NoteSerializer, StockSearchSerializer
 from .permissions import IsOwnerOrReadOnly
 
 
@@ -97,7 +97,7 @@ class FollowedStocksList(generics.ListAPIView):
     
     
 class StockSearchView(generics.ListAPIView):
-    serializer_class = GeneralSerializer
+    serializer_class = StockSearchSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
