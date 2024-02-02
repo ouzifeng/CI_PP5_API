@@ -13,9 +13,15 @@ class Command(BaseCommand):
             # Convert Decimal to float for calculation
             start_value = float(start_value)
             end_value = float(end_value)
-            # CAGR formula: [(End Value/Start Value) ** (1/Periods)] - 1
-            cagr = (end_value / start_value) ** (1.0 / periods) - 1
-            return cagr
+            
+            # Check if the ratio is negative, which would result in a complex CAGR
+            if (end_value / start_value) < 0:
+                # Handle negative ratio case as you see fit, maybe return None or 0
+                return None
+            else:
+                # CAGR formula: [(End Value/Start Value) ** (1/Periods)] - 1
+                cagr = (end_value / start_value) ** (1.0 / periods) - 1
+                return cagr
         else:
             # Return None or 0 or any other value you consider appropriate when CAGR cannot be calculated
             return None

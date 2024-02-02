@@ -15,7 +15,7 @@ class Command(BaseCommand):
     help = 'Imports stock data from the EOD Historical Data API'
 
     def handle(self, *args, **kwargs):
-        url = 'https://eodhd.com/api/fundamentals/TSLA.US?api_token=demo&fmt=json'
+        url = 'https://eodhd.com/api/fundamentals/AMZN.US?api_token=demo&fmt=json'
         response = requests.get(url)
         data = response.json()
 

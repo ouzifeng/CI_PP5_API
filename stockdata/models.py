@@ -401,7 +401,7 @@ class BalanceSheet(models.Model):
         related_name='balance_sheets'
     )
     date = models.DateField()
-    filing_date = models.DateField()
+    filing_date = models.DateField(null=True, blank=True)
     currency_symbol = models.CharField(max_length=10)
     total_assets = models.DecimalField(
         max_digits=15,
@@ -791,7 +791,7 @@ class CashFlow(models.Model):
         related_name='cash_flows'
     )
     date = models.DateField()
-    filing_date = models.DateField()
+    filing_date = models.DateField(null=True, blank=True)
     currency_symbol = models.CharField(max_length=10, blank=True, null=True)
     investments = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
     change_to_liabilities = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
@@ -843,7 +843,7 @@ class IncomeStatement(models.Model):
         related_name='income_statements'
     )
     date = models.DateField()
-    filing_date = models.DateField()
+    filing_date = models.DateField(null=True, blank=True)
     currency_symbol = models.CharField(max_length=10, null=True, blank=True)
     research_development = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
     effect_of_accounting_charges = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
