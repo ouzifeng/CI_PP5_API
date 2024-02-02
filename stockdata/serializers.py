@@ -81,7 +81,7 @@ class NoteSerializer(serializers.ModelSerializer):
 class StockSearchSerializer(serializers.ModelSerializer):
     class Meta:
         model = General
-        fields = ('code', 'name')
+        fields = ('code', 'name', 'primary_ticker')
         
 
 
