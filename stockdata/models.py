@@ -332,20 +332,26 @@ class SplitsDividends(models.Model):
     )
     forward_annual_dividend_rate = models.DecimalField(
         max_digits=10,
-        decimal_places=2
+        decimal_places=2,
+        null=True,
+        blank=True
     )
     forward_annual_dividend_yield = models.DecimalField(
         max_digits=5,
-        decimal_places=4
+        decimal_places=4,
+        null=True,
+        blank=True
     )
     payout_ratio = models.DecimalField(
         max_digits=10,
-        decimal_places=4
+        decimal_places=4,
+        null=True,
+        blank=True
     )
-    dividend_date = models.DateField()
-    ex_dividend_date = models.DateField()
+    dividend_date = models.DateField(null=True, blank=True)
+    ex_dividend_date = models.DateField(null=True, blank=True)
     last_split_factor = models.CharField(max_length=20)
-    last_split_date = models.DateField()
+    last_split_date = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return (

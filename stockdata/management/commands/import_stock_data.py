@@ -3,11 +3,19 @@ from stockdata.models import General, Description, Highlights, Valuation, Techni
 import requests
 from datetime import datetime
 
+
+
+def parse_date(date_string):
+    try:
+        return datetime.strptime(date_string, '%Y-%m-%d').date() if date_string and date_string != '0000-00-00' else None
+    except ValueError:
+        return None
+
 class Command(BaseCommand):
     help = 'Imports stock data from the EOD Historical Data API'
 
     def handle(self, *args, **kwargs):
-        url = 'https://eodhd.com/api/fundamentals/AAPL.US?api_token=demo&fmt=json'
+        url = 'https://eodhd.com/api/fundamentals/TSLA.US?api_token=demo&fmt=json'
         response = requests.get(url)
         data = response.json()
 
@@ -119,12 +127,13 @@ class Command(BaseCommand):
                 'forward_annual_dividend_rate': splits_dividends_data.get('ForwardAnnualDividendRate'),
                 'forward_annual_dividend_yield': splits_dividends_data.get('ForwardAnnualDividendYield'),
                 'payout_ratio': splits_dividends_data.get('PayoutRatio'),
-                'dividend_date': datetime.strptime(splits_dividends_data.get('DividendDate'), '%Y-%m-%d').date(),
-                'ex_dividend_date': datetime.strptime(splits_dividends_data.get('ExDividendDate'), '%Y-%m-%d').date(),
+                'dividend_date': parse_date(splits_dividends_data.get('DividendDate')),
+                'ex_dividend_date': parse_date(splits_dividends_data.get('ExDividendDate')),
                 'last_split_factor': splits_dividends_data.get('LastSplitFactor'),
-                'last_split_date': datetime.strptime(splits_dividends_data.get('LastSplitDate'), '%Y-%m-%d').date(),
+                'last_split_date': parse_date(splits_dividends_data.get('LastSplitDate')),
             }
         )
+
 
         analyst_ratings_data = data.get('AnalystRatings', {})
         analyst_ratings, created = AnalystRatings.objects.update_or_create(
