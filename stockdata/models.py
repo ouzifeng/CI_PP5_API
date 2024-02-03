@@ -1,5 +1,7 @@
 from django.db import models
 from django.conf import settings
+from django.core.validators import MinValueValidator
+from decimal import Decimal
 
 class General(models.Model):
     code = models.CharField(max_length=20)
@@ -912,3 +914,29 @@ class Note(models.Model):
     def __str__(self):
         return f"Note by {self.user.username} on {self.stock.name}"
     
+
+class StockPrices(models.Model):
+    general = models.ForeignKey(
+        General, 
+        on_delete=models.CASCADE, 
+        related_name='stock_prices'
+    )
+    Y1 = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.01'))])
+    Y2 = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.01'))])
+    Y3 = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.01'))])
+    Y4 = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.01'))])
+    Y5 = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.01'))])
+    Y6 = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.01'))])
+    Y7 = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.01'))])
+    Y8 = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.01'))])
+    Y9 = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.01'))])
+    Y10 = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.01'))])
+    Y11 = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.01'))])
+    cagr_5_years = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True)
+    cagr_10_years = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True)
+
+    def __str__(self):
+        return f"Stock Prices for {self.general.name} ({self.general.code})"
+    
+    class Meta:
+        verbose_name_plural = "Stock Prices"
