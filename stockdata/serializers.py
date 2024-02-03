@@ -63,11 +63,14 @@ class GeneralSerializer(serializers.ModelSerializer):
     general_cagr = CagrSerializer(read_only=True)
     income_statements = IncomeStatementSerializer(many=True, read_only=True)
     balance_sheets = BalanceSheetSerializer(many=True, read_only=True)
-    cash_flows = CashFlowSerializer(many=True, read_only=True)    
+    cash_flows = CashFlowSerializer(many=True, read_only=True)
+    stock_prices = StockPricesSerializer(read_only=True)
+    dividend_yield_data = DividendYieldDataSerializer(read_only=True)
 
     class Meta:
         model = General
         fields = '__all__'
+
         
         
 class NoteSerializer(serializers.ModelSerializer):
@@ -84,6 +87,15 @@ class StockSearchSerializer(serializers.ModelSerializer):
         fields = ('code', 'name', 'primary_ticker')
         
 
+class StockPricesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StockPrices
+        fields = '__all__'
+
+class DividendYieldDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DividendYieldData
+        fields = '__all__'
 
         
         
