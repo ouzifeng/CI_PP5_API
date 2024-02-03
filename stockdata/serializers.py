@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import General, Highlights, Valuation, Technicals, SplitsDividends, AnalystRatings, Description, IncomeStatement, CAGR, CashFlow, BalanceSheet, Note, StockPrices, DividendYieldData
+from .models import General, Highlights, Valuation, Technicals, SplitsDividends, AnalystRatings, Description, IncomeStatement, CAGR, CashFlow, BalanceSheet, Note
 from django.contrib.auth.models import User
 
 class IncomeStatementSerializer(serializers.ModelSerializer):
@@ -52,16 +52,6 @@ class CashFlowSerializer(serializers.ModelSerializer):
         model = CashFlow
         fields = '__all__'
         
-class StockPricesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = StockPrices
-        fields = '__all__'
-
-class DividendYieldDataSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = DividendYieldData
-        fields = '__all__'        
-        
 
 class GeneralSerializer(serializers.ModelSerializer):
     highlights = HighlightSerializer(read_only=True)
@@ -73,14 +63,11 @@ class GeneralSerializer(serializers.ModelSerializer):
     general_cagr = CagrSerializer(read_only=True)
     income_statements = IncomeStatementSerializer(many=True, read_only=True)
     balance_sheets = BalanceSheetSerializer(many=True, read_only=True)
-    cash_flows = CashFlowSerializer(many=True, read_only=True)
-    stock_prices = StockPricesSerializer(read_only=True)
-    dividend_yield_data = DividendYieldDataSerializer(read_only=True)
+    cash_flows = CashFlowSerializer(many=True, read_only=True)    
 
     class Meta:
         model = General
         fields = '__all__'
-
         
         
 class NoteSerializer(serializers.ModelSerializer):
@@ -96,6 +83,7 @@ class StockSearchSerializer(serializers.ModelSerializer):
         model = General
         fields = ('code', 'name', 'primary_ticker')
         
+
 
         
         

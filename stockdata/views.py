@@ -24,9 +24,7 @@ class StockDetailView(generics.RetrieveAPIView):
             'general_cagr',
             'income_statements',
             'balance_sheets',
-            'cash_flows',
-            'stock_prices',
-            'dividend_yield_data'
+            'cash_flows'
         ).all()
 
     def get(self, request, *args, **kwargs):
