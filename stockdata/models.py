@@ -927,13 +927,7 @@ class StockPrices(models.Model):
     Y4 = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.01'))])
     Y5 = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.01'))])
     Y6 = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.01'))])
-    Y7 = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.01'))])
-    Y8 = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.01'))])
-    Y9 = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.01'))])
-    Y10 = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.01'))])
-    Y11 = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.01'))])
     cagr_5_years = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True)
-    cagr_10_years = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True)
 
     def __str__(self):
         return f"Stock Prices for {self.general.name} ({self.general.code})"
