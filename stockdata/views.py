@@ -25,7 +25,7 @@ class StockDetailView(generics.RetrieveAPIView):
             'income_statements',
             'balance_sheets',
             'cash_flows',
-            'stock-prices',
+            'stock_prices',
             'dividend_yield_data'
         ).all()
 
