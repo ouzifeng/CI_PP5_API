@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from .serializers import CustomUserSerializer
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view
+from django.core.mail import send_mail
 
 class CustomUserCreate(APIView):
     permission_classes = [AllowAny]
