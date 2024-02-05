@@ -5,7 +5,7 @@ from django.utils.encoding import force_bytes
 def send_password_reset_email(user):
     uid = urlsafe_base64_encode(force_bytes(user.pk))
     token = default_token_generator.make_token(user)
-    password_reset_url = f"http://yourfrontend.com/reset/{uid}/{token}"
+    password_reset_url = f"http://localhost:3000/reset-password/{uid}/{token}"
 
     subject = "Password reset requested"
     message = f"""
@@ -14,7 +14,7 @@ def send_password_reset_email(user):
     You're receiving this email because you requested a password reset for your user account at our site.
 
     Please go to the following page and choose a new password:
-    {password_reset_url}
+    <a href="{password_reset_url}">{password_reset_url}</a>
 
     If you didn't request this, please ignore this email and your password will remain unchanged.
 
