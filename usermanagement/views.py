@@ -5,6 +5,7 @@ from .serializers import CustomUserSerializer
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view
 from django.core.mail import send_mail
+from .email import send_password_reset_email
 
 class CustomUserCreate(APIView):
     permission_classes = [AllowAny]
@@ -35,3 +36,17 @@ def send_contact_email(request):
         return Response({"message": "Email sent successfully"}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+
+@api_view(['POST'])
+def password_reset_request(request):
+    email = request.data.get('email')
+    if email:
+        try:
+            user = User.objects.get(email=email)
+            subject, message = send_password_reset_email(user)
+            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=False)
+            return Response({"message": "Password reset email sent."}, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({"error": "User with this email does not exist."}, status=status.HTTP_400_BAD_REQUEST)
+    return Response({"error": "Email is not provided."}, status=status.HTTP_400_BAD_REQUEST)    
