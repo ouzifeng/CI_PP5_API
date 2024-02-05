@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import CustomUserCreate, send_contact_email, password_reset_request
+from .views import CustomUserCreate, send_contact_email, custom_password_reset_request
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
@@ -9,4 +9,5 @@ urlpatterns = [
     path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+    path('custom-password-reset/', custom_password_reset_request, name='custom_password_reset'),
 ]

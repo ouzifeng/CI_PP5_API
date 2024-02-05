@@ -3,9 +3,17 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import CustomUserSerializer
 from rest_framework.permissions import AllowAny
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from django.core.mail import send_mail
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.urls import reverse
+from django.conf import settings
 from .email import send_password_reset_email
+from django.contrib.auth import get_user_model
+
+
 
 class CustomUserCreate(APIView):
     permission_classes = [AllowAny]
@@ -38,15 +46,17 @@ def send_contact_email(request):
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
+User = get_user_model()
+
 @api_view(['POST'])
-def password_reset_request(request):
+@permission_classes([AllowAny])
+def custom_password_reset_request(request):
     email = request.data.get('email')
     if email:
         try:
             user = User.objects.get(email=email)
-            subject, message = send_password_reset_email(user)
-            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=False)
+            send_password_reset_email(request, user)
             return Response({"message": "Password reset email sent."}, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({"error": "User with this email does not exist."}, status=status.HTTP_400_BAD_REQUEST)
-    return Response({"error": "Email is not provided."}, status=status.HTTP_400_BAD_REQUEST)    
+    return Response({"error": "Email is not provided."}, status=status.HTTP_400_BAD_REQUEST)

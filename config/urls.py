@@ -11,5 +11,6 @@ urlpatterns = [
     path('api/notes/', NoteListCreate.as_view(), name='note-list-create'),
     path('api/notes/<int:pk>/', NoteDetail.as_view(), name='note-detail'), 
     path('api/followed_stocks/', FollowedStocksView.as_view(), name='followed-stocks'),
-    path('api/search_stocks/', StockSearchView.as_view(), name='stock-search'),    
+    path('api/search_stocks/', StockSearchView.as_view(), name='stock-search'),
+    path('auth/', include('usermanagement.urls')),    
 ]
