@@ -19,3 +19,5 @@ class CustomUserSerializer(serializers.ModelSerializer):
             last_name=validated_data.get('last_name', '')
         )
         return user
+    
+    
