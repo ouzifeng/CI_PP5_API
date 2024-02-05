@@ -14,7 +14,7 @@ def send_password_reset_email(user):
     You're receiving this email because you requested a password reset for your user account at our site.
 
     Please go to the following page and choose a new password:
-    <a href="{password_reset_url}">{password_reset_url}</a>
+    <a href="{password_reset_url}">Click This Link</a>
 
     If you didn't request this, please ignore this email and your password will remain unchanged.
 
