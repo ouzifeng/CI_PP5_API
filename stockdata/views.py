@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from .models import General, Note
-from .serializers import GeneralSerializer, NoteSerializer, StockSearchSerializer
+from .serializers import GeneralSerializer, NoteSerializer, StockSearchSerializer, DividendSerializer
 from .permissions import IsOwnerOrReadOnly
 
 
@@ -38,9 +38,12 @@ class StockDetailView(generics.RetrieveAPIView):
             is_following = instance.followers.filter(id=user.id).exists()
         else:
             is_following = False
+            
+        dividend_data = DividendSerializer(instance).data    
         
         data = serializer.data
         data['is_following'] = is_following
+        data['dividend_data'] = dividend_data
         
         return Response(data)
 

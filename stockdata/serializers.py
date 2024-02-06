@@ -95,6 +95,55 @@ class StockSearchSerializer(serializers.ModelSerializer):
         model = General
         fields = ('code', 'name', 'primary_ticker')
         
+        
+class DividendSerializer(serializers.Serializer):
+    # Fields from the General model
+    name = serializers.CharField()
+    code = serializers.CharField()
+    country_iso = serializers.CharField()
+    industry = serializers.CharField()
+
+    # Fields from the Highlights model
+    market_capitalization = serializers.DecimalField(
+        max_digits=15,
+        decimal_places=2,
+        source='highlights.market_capitalization'
+    )
+    pe_ratio = serializers.DecimalField(
+        max_digits=10,
+        decimal_places=4,
+        source='highlights.pe_ratio'
+    )
+    dividend_yield = serializers.DecimalField(
+        max_digits=10,
+        decimal_places=4,
+        source='highlights.dividend_yield'
+    )
+
+    # Fields from the SplitsDividends model
+    forward_annual_dividend_yield = serializers.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        source='splits_dividends.forward_annual_dividend_yield'
+    )
+    payout_ratio = serializers.DecimalField(
+        max_digits=10,
+        decimal_places=4,
+        source='splits_dividends.payout_ratio'
+    )
+    dividend_date = serializers.DateField(
+        source='splits_dividends.dividend_date'
+    )
+
+    # Fields from the DividendYieldData model
+    cagr_5_years = serializers.DecimalField(
+        max_digits=10,
+        decimal_places=4,
+        source='dividend_yield_data.cagr_5_years'
+    )
+
+    class Meta:
+        model = General   
 
 
         
