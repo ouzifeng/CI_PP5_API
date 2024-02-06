@@ -28,9 +28,15 @@ SECRET_KEY = "django-insecure-)y@mi)6%jul=wb+6asjrg-nmc519@%&qd0c#k6zkdul_+l=cq3
 DEBUG = True
 
 CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOW_CREDENTIALS = True
+ALLOWED_HOSTS = [
+    'http://localhost:3000',  # The origin of your React app
+    'https://django-stocks-ecbc6bc5e208.herokuapp.com',
+]
 
-
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000',  # The origin of your React app
+    'https://django-stocks-ecbc6bc5e208.herokuapp.com',  # Your Django app's domain
+]
 
 # Application definition
 
