@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'usermanagement',
     'allauth',
     'allauth.account',
-    'allauth.socialaccount',        
+    'allauth.socialaccount',
+    'corsheaders',  
 ]
 
 # Authentication Backends
