@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from stockdata.views import StockDetailView, toggle_follow_stock, NoteListCreate, NoteDetail, FollowedStocksView, StockSearchView
+from stockdata.views import StockDetailView, toggle_follow_stock, NoteListCreate, NoteDetail, FollowedStocksView, StockSearchView, DividendDataListView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -12,5 +12,6 @@ urlpatterns = [
     path('api/notes/<int:pk>/', NoteDetail.as_view(), name='note-detail'), 
     path('api/followed_stocks/', FollowedStocksView.as_view(), name='followed-stocks'),
     path('api/search_stocks/', StockSearchView.as_view(), name='stock-search'),
-    path('auth/', include('usermanagement.urls')),    
+    path('auth/', include('usermanagement.urls')), 
+    path('api/dividend_data/', DividendDataListView.as_view(), name='dividend-data-list'),   
 ]

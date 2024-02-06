@@ -38,12 +38,10 @@ class StockDetailView(generics.RetrieveAPIView):
             is_following = instance.followers.filter(id=user.id).exists()
         else:
             is_following = False
-            
-        dividend_data = DividendSerializer(instance).data    
+             
         
         data = serializer.data
         data['is_following'] = is_following
-        data['dividend_data'] = dividend_data
         
         return Response(data)
 
@@ -110,4 +108,13 @@ class StockSearchView(generics.ListAPIView):
         query = self.request.query_params.get('query', None)
         if query is not None:
             queryset = queryset.filter(Q(code__icontains=query) | Q(name__icontains=query))
+        return queryset    
+    
+    
+class DividendDataListView(generics.ListAPIView):
+    serializer_class = DividendSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        queryset = General.objects.all()
         return queryset    
