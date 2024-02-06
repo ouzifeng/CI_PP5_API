@@ -30,10 +30,6 @@ DEBUG = True
 CORS_ORIGIN_ALLOW_ALL = True
 ALLOWED_HOSTS = ['*']
 
-CORS_ORIGIN_WHITELIST = [
-    'http://localhost:3000',  # The origin of your React app
-    'https://django-stocks-ecbc6bc5e208.herokuapp.com',  # Your Django app's domain
-]
 
 # Application definition
 
@@ -64,9 +60,9 @@ AUTHENTICATION_CLASSES = (
 REST_USE_JWT = True
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
