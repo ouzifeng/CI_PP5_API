@@ -123,7 +123,7 @@ class DividendSerializer(serializers.Serializer):
     # Fields from the SplitsDividends model
     forward_annual_dividend_yield = serializers.DecimalField(
         max_digits=10,
-        decimal_places=2,
+        decimal_places=4,
         source='splits_dividends.forward_annual_dividend_yield'
     )
     payout_ratio = serializers.DecimalField(
