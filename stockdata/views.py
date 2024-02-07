@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from .models import General, Note
 from .serializers import GeneralSerializer, NoteSerializer, StockSearchSerializer, DividendSerializer
 from .permissions import IsOwnerOrReadOnly
+from rest_framework.pagination import PageNumberPagination
 
 
 class StockDetailView(generics.RetrieveAPIView):
@@ -110,11 +111,20 @@ class StockSearchView(generics.ListAPIView):
             queryset = queryset.filter(Q(code__icontains=query) | Q(name__icontains=query))
         return queryset    
     
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 100 
+    page_size_query_param = 'page_size'
+    max_page_size = 100    
+    
     
 class DividendDataListView(generics.ListAPIView):
     serializer_class = DividendSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
-        queryset = General.objects.all()
-        return queryset    
+        queryset = General.objects.filter(highlights__dividend_yield__gt=0)
+        return queryset
+    
+    
+    
