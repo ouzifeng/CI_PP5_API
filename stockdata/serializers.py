@@ -103,7 +103,7 @@ class DividendSerializer(serializers.Serializer):
     country_iso = serializers.CharField()
     industry = serializers.CharField()
     exchange = serializers.CharField()
-    currency_symbolv= serializers.CharField()
+    currency_symbol = serializers.CharField()
 
     # Fields from the Highlights model
     market_capitalization = serializers.DecimalField(
