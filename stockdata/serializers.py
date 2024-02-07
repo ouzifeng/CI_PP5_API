@@ -99,9 +99,11 @@ class StockSearchSerializer(serializers.ModelSerializer):
 class DividendSerializer(serializers.Serializer):
     # Fields from the General model
     name = serializers.CharField()
-    code = serializers.CharField()
+    primary_ticker = serializers.CharField()
     country_iso = serializers.CharField()
     industry = serializers.CharField()
+    exchange = serializers.CharField()
+    currency_symbolv= serializers.CharField()
 
     # Fields from the Highlights model
     market_capitalization = serializers.DecimalField(
