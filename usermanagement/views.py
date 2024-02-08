@@ -13,10 +13,9 @@ from django.conf import settings
 from .email import send_password_reset_email, send_verification_email
 from django.contrib.auth import get_user_model
 from .models import CustomUser
-from rest_framework_simplejwt.tokens import RefreshToken
 from google.oauth2 import id_token
 from google.auth.transport import requests
-
+from rest_framework.authtoken.models import Token
 
 class CustomUserCreate(APIView):
     permission_classes = [AllowAny]
@@ -118,54 +117,33 @@ class GoogleSignIn(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        # Get the token sent by the client
         token = request.data.get('token')
-
         try:
-            # Verify the Google ID token using Google's verifier
             idinfo = id_token.verify_oauth2_token(token, requests.Request(), settings.GOOGLE_CLIENT_ID)
-
-            # The ID token is valid. Now get the user's details
-            userid = idinfo['sub']
             email = idinfo['email']
-            first_name = idinfo.get('given_name', '')
-            last_name = idinfo.get('family_name', '')
-            picture_url = idinfo.get('picture', '')
-
-            # Check if the email is verified by Google
             if idinfo.get('email_verified'):
                 user, created = CustomUser.objects.get_or_create(email=email, defaults={
-                    'first_name': first_name,
-                    'last_name': last_name,
-                    'avatar_url': picture_url,
-                    'is_active': True  # Be cautious with auto-activating users; consider your application's context
+                    'first_name': idinfo.get('given_name', ''),
+                    'last_name': idinfo.get('family_name', ''),
+                    'avatar_url': idinfo.get('picture', ''),
+                    'is_active': True,
                 })
-
-                # If the user was created now, set an unusable password
                 if created:
                     user.set_unusable_password()
                     user.save()
-                else:
-                    # Update the avatar URL each time the user logs in
-                    user.avatar_url = picture_url
-                    user.save(update_fields=['avatar_url'])
 
-                # Create tokens using the rest_framework_simplejwt library
-                refresh = RefreshToken.for_user(user)
+                # Generate or get existing Token for the user
+                token, created = Token.objects.get_or_create(user=user)
 
-                # Send the response back to the client
                 return Response({
-                    'refresh': str(refresh),
-                    'access': str(refresh.access_token),
+                    'token': token.key,
                     'user_id': user.id,
                     'first_name': user.first_name,
                     'last_name': user.last_name,
                     'email': user.email,
                     'avatar_url': user.avatar_url,
-                }, status=status.HTTP_200_OK)
+                })
             else:
-                return Response({"error": "Google email not verified"}, status=status.HTTP_400_BAD_REQUEST)
-
-        except ValueError as e:
-            # Invalid token
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"error": "Google email not verified"}, status=400)
+        except ValueError:
+            return Response({"error": "Invalid token"}, status=400)
