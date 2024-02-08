@@ -11,14 +11,7 @@ from django.utils.html import mark_safe
 def send_password_reset_email(request, user):
     uid = urlsafe_base64_encode(force_bytes(user.pk))
     token = default_token_generator.make_token(user)
-    
-    # Print user and token information
-    print(f"Sending password reset email to: {user.email}")
-    print(f"UID: {uid}")
-    print(f"Token: {token}")
-    print(f"User's last login: {user.last_login}")
-    print(f"User's password hash: {user.password}")
-    
+      
     # Construct the password reset URL on the frontend
     password_reset_url = f"{settings.FRONTEND_BASE_URL}/reset-password/{uid}/{token}"
 
@@ -49,7 +42,7 @@ def send_password_reset_email(request, user):
 def send_verification_email(user, request):
     token = default_token_generator.make_token(user)
     uid = urlsafe_base64_encode(force_bytes(user.pk))
-    verification_url = f"{settings.FRONTEND_BASE_URL}/verify-email/{uid}/{token}"
+    verification_url = f"{settings.FRONTEND_BASE_URL}verify-email/{uid}/{token}"
 
     subject = 'Verify your email'
     message = f"""
