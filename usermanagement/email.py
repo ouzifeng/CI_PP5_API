@@ -4,6 +4,8 @@ from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
 from django.urls import reverse
 from django.conf import settings
+from django.utils.html import mark_safe
+
 
 
 def send_password_reset_email(request, user):
@@ -47,11 +49,28 @@ def send_password_reset_email(request, user):
 def send_verification_email(user, request):
     token = default_token_generator.make_token(user)
     uid = urlsafe_base64_encode(force_bytes(user.pk))
-    verification_link = request.build_absolute_uri(reverse('verify-email', args=[uid, token]))
-    
+    verification_url = f"{settings.FRONTEND_BASE_URL}/verify-email/{uid}/{token}"
+
     subject = 'Verify your email'
-    message = f'Please click the following link to verify your email: {verification_link}'
-    from_email = 'mr.davidoak@gmail.com'
-    recipient_list = [user.email]
+    message = f"""
+    Hi {user.first_name},
+
+    Please click the link below to verify your email and activate your account:
+    <a href="{verification_url}">Verify Email</a>
+
+    If you did not request this, please ignore this email.
+
+    Thanks for using our site!
+    """
     
-    send_mail(subject, message, from_email, recipient_list)
+    # Mark the message as safe HTML content
+    html_message = mark_safe(message)
+
+    send_mail(
+        subject,
+        message,  # This is the plain-text version of the message.
+        settings.DEFAULT_FROM_EMAIL,
+        [user.email],
+        fail_silently=False,
+        html_message=html_message,  # This is the HTML version.
+    )
