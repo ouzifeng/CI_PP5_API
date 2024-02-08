@@ -42,3 +42,16 @@ def send_password_reset_email(request, user):
         [user.email],
         fail_silently=False,
     )
+
+
+def send_verification_email(user, request):
+    token = default_token_generator.make_token(user)
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    verification_link = request.build_absolute_uri(reverse('your-verification-endpoint-name', args=[uid, token]))
+    
+    subject = 'Verify your email'
+    message = f'Please click the following link to verify your email: {verification_link}'
+    from_email = 'from@yourdomain.com'
+    recipient_list = [user.email]
+    
+    send_mail(subject, message, from_email, recipient_list)
