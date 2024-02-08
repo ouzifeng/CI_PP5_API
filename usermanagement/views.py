@@ -12,6 +12,7 @@ from django.urls import reverse
 from django.conf import settings
 from .email import send_password_reset_email, send_verification_email
 from django.contrib.auth import get_user_model
+from .models import CustomUser
 
 
 
