@@ -103,7 +103,7 @@ def verify_email(request, uidb64, token):
 
         if user and default_token_generator.check_token(user, token):
             user.email_verified = True
-            user.is_active = True  # Activate the user upon email verification
+            user.is_active = True
             user.save()
             return Response({"message": "Email verified successfully"}, status=status.HTTP_200_OK)
         else:
