@@ -21,7 +21,7 @@ class CustomUserCreate(APIView):
     def post(self, request):
         reg_serializer = CustomUserSerializer(data=request.data)
         if reg_serializer.is_valid():
-            new_user = reg_serializer.save()
+            new_user = reg_serializer.save(is_active=False)
             if new_user:
                 send_verification_email(new_user, request)
                 return Response(status=status.HTTP_201_CREATED)
