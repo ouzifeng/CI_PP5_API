@@ -125,15 +125,18 @@ class GoogleSignIn(APIView):
                 user, created = CustomUser.objects.get_or_create(email=email, defaults={
                     'first_name': idinfo.get('given_name', ''),
                     'last_name': idinfo.get('family_name', ''),
-                    'avatar_url': idinfo.get('picture', ''),
+                    # Removed 'avatar_url' from here
                     'is_active': True,
                 })
+
+                # Set avatar_url for both new and existing users
+                user.avatar_url = idinfo.get('picture', '')
                 if created:
                     user.set_unusable_password()
-                    user.save()
+                user.save()
 
                 # Generate or get existing Token for the user
-                token, created = Token.objects.get_or_create(user=user)
+                token, _ = Token.objects.get_or_create(user=user)
 
                 return Response({
                     'token': token.key,
@@ -141,7 +144,7 @@ class GoogleSignIn(APIView):
                     'first_name': user.first_name,
                     'last_name': user.last_name,
                     'email': user.email,
-                    'avatar_url': user.avatar_url,
+                    'avatar_url': user.avatar_url,  # This should now always return the correct value
                 })
             else:
                 return Response({"error": "Google email not verified"}, status=400)
