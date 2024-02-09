@@ -14,9 +14,14 @@ class General(models.Model):
     country_name = models.CharField(max_length=100, null=True, blank=True)
     country_iso = models.CharField(max_length=10, null=True, blank=True)
     isin = models.CharField(max_length=20, null=True, blank=True)
-    primary_ticker = models.CharField(
+    uid = models.CharField(
         max_length=10,
         unique=True,
+        null=True,
+        blank=True
+    )
+    primary_ticker = models.CharField(
+        max_length=10,
         null=True,
         blank=True
     )
@@ -26,7 +31,6 @@ class General(models.Model):
     address = models.TextField(null=True, blank=True)
     phone = models.CharField(max_length=50, null=True, blank=True)
     web_url = models.URLField(null=True, blank=True)
-    logo_url = models.URLField(null=True, blank=True)
     full_time_employees = models.IntegerField(null=True, blank=True)
     followers = models.ManyToManyField(
         settings.AUTH_USER_MODEL, 
@@ -38,10 +42,6 @@ class General(models.Model):
     def __str__(self):
         return f"{self.name} ({self.code})"
 
-    def save(self, *args, **kwargs):
-        if not self.logo_url.startswith('https://eodhd.com'):
-            self.logo_url = 'https://eodhd.com' + self.logo_url
-        super(General, self).save(*args, **kwargs)
 
 
 class Description(models.Model):
