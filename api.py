@@ -6,3 +6,5 @@ data = requests.get(url).json()
 
 # Pretty print the JSON data
 print(json.dumps(data, indent=4))
+
+

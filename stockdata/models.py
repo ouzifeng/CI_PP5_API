@@ -352,7 +352,7 @@ class SplitsDividends(models.Model):
     )
     dividend_date = models.DateField(null=True, blank=True)
     ex_dividend_date = models.DateField(null=True, blank=True)
-    last_split_factor = models.CharField(max_length=20)
+    last_split_factor = models.CharField(null=True, blank=True, max_length=20)
     last_split_date = models.DateField(null=True, blank=True)
 
     def __str__(self):

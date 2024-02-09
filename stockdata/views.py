@@ -12,7 +12,7 @@ from rest_framework.pagination import PageNumberPagination
 class StockDetailView(generics.RetrieveAPIView):
     queryset = General.objects.all()
     serializer_class = GeneralSerializer
-    lookup_field = 'primary_ticker'
+    lookup_field = 'uid'
 
     def get_queryset(self):
         return General.objects.prefetch_related(
@@ -48,9 +48,9 @@ class StockDetailView(generics.RetrieveAPIView):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def toggle_follow_stock(request, primary_ticker):
+def toggle_follow_stock(request, uid):
     try:
-        stock = General.objects.get(primary_ticker=primary_ticker)
+        stock = General.objects.get(uid=uid)
     except General.DoesNotExist:
         return Response({"error": "Stock not found"}, status=status.HTTP_404_NOT_FOUND)
 

@@ -10,12 +10,37 @@ def parse_date(date_string):
         return datetime.strptime(date_string, '%Y-%m-%d').date() if date_string and date_string != '0000-00-00' else None
     except ValueError:
         return None
+    
+def import_tickers(api_token, exchange='LSE'):
+    ticker_url = f'https://eodhd.com/api/exchange-symbol-list/{exchange}?api_token={api_token}&fmt=json'
+    response = requests.get(ticker_url)
+
+    if response.status_code == 200:
+        ticker_data = response.json()
+
+        for entry in ticker_data:
+            uid = f"{entry['Code']}.{exchange}"
+
+            if len(uid) > 10:
+                print(f"Skipping ticker {uid} because it's longer than 10 characters.")
+                continue
+
+            General.objects.update_or_create(
+                uid=uid,
+                defaults={
+                    'code': entry['Code'],
+                }
+            )
+        print(f'Successfully imported tickers for {exchange}.')
+    else:
+        print(f'Failed to download ticker list for {exchange}. Status code: {response.status_code}')    
 
 class Command(BaseCommand):
     help = 'Imports stock data from the EOD Historical Data API'
 
     def handle(self, *args, **kwargs):
         api_token = '649401f5eeff73.67939383'
+        # import_tickers(api_token)
         stocks = General.objects.filter(uid__endswith='.LSE')
 
         print(f"Total stocks found: {stocks.count()}")
@@ -87,7 +112,7 @@ class Command(BaseCommand):
                 'eps_estimate_next_year': highlights_data.get('EPSEstimateNextYear'),
                 'eps_estimate_next_quarter': highlights_data.get('EPSEstimateNextQuarter'),
                 'eps_estimate_current_quarter': highlights_data.get('EPSEstimateCurrentQuarter'),
-                'most_recent_quarter': datetime.strptime(highlights_data.get('MostRecentQuarter'), '%Y-%m-%d').date() if highlights_data.get('MostRecentQuarter') else None,
+                'most_recent_quarter': parse_date(highlights_data.get('MostRecentQuarter')),
                 'profit_margin': highlights_data.get('ProfitMargin'),
                 'operating_margin_ttm': highlights_data.get('OperatingMarginTTM'),
                 'return_on_assets_ttm': highlights_data.get('ReturnOnAssetsTTM'),
@@ -186,7 +211,7 @@ class Command(BaseCommand):
                     date=datetime_obj,  # Correctly use datetime_obj here
                     type=sheet_type,
                     defaults={
-                        'filing_date': datetime.strptime(sheet_data.get('filing_date'), '%Y-%m-%d').date() if sheet_data.get('filing_date') else None,
+                        'filing_date': parse_date(sheet_data.get('filing_date')),
                         'currency_symbol': sheet_data.get('currency_symbol', ''),
                         'total_assets': float(sheet_data.get('totalAssets')) if sheet_data.get('totalAssets') else None,
                         'intangible_assets': float(sheet_data.get('intangibleAssets')) if sheet_data.get('intangibleAssets') else None,
@@ -251,6 +276,113 @@ class Command(BaseCommand):
                         'common_stock_shares_outstanding': float(sheet_data.get('commonStockSharesOutstanding')) if sheet_data.get('commonStockSharesOutstanding') else None,
                     }
                 )
+                
+        # Process Cash Flow data
+        for sheet_type in ['yearly', 'quarterly']:
+            cash_flow_data = data.get('Financials', {}).get('Cash_Flow', {}).get(sheet_type, {})
+            for key, sheet_data in cash_flow_data.items():
+                try:
+                    date_obj = datetime.strptime(key, '%Y-%m-%d').date()
+                    datetime_obj = make_aware(datetime.combine(date_obj, datetime.min.time()))
+                except ValueError:
+                    self.stdout.write(self.style.ERROR(f"Invalid date format for {key} in {sheet_type} data."))
+                    continue
 
+                if date_obj.year < now().year - 5:
+                    continue
+
+                cash_flow, created = CashFlow.objects.update_or_create(
+                    general=stock,
+                    date=datetime_obj,
+                    type=sheet_type,
+                    defaults={
+                        'filing_date': datetime.strptime(sheet_data.get('filing_date'), '%Y-%m-%d').date() if sheet_data.get('filing_date') else None,
+                        'currency_symbol': sheet_data.get('currency_symbol', ''),
+                        'investments': float(sheet_data.get('investments')) if sheet_data.get('investments') else None,
+                        'change_to_liabilities': float(sheet_data.get('changeToLiabilities')) if sheet_data.get('changeToLiabilities') else None,
+                        'total_cashflows_from_investing_activities': float(sheet_data.get('totalCashflowsFromInvestingActivities')) if sheet_data.get('totalCashflowsFromInvestingActivities') else None,
+                        'net_borrowings': float(sheet_data.get('netBorrowings')) if sheet_data.get('netBorrowings') else None,
+                        'total_cash_from_financing_activities': float(sheet_data.get('totalCashFromFinancingActivities')) if sheet_data.get('totalCashFromFinancingActivities') else None,
+                        'change_to_operating_activities': float(sheet_data.get('changeToOperatingActivities')) if sheet_data.get('changeToOperatingActivities') else None,
+                        'net_income': float(sheet_data.get('netIncome')) if sheet_data.get('netIncome') else None,
+                        'change_in_cash': float(sheet_data.get('changeInCash')) if sheet_data.get('changeInCash') else None,
+                        'begin_period_cash_flow': float(sheet_data.get('beginPeriodCashFlow')) if sheet_data.get('beginPeriodCashFlow') else None,
+                        'end_period_cash_flow': float(sheet_data.get('endPeriodCashFlow')) if sheet_data.get('endPeriodCashFlow') else None,
+                        'total_cash_from_operating_activities': float(sheet_data.get('totalCashFromOperatingActivities')) if sheet_data.get('totalCashFromOperatingActivities') else None,
+                        'issuance_of_capital_stock': float(sheet_data.get('issuanceOfCapitalStock')) if sheet_data.get('issuanceOfCapitalStock') else None,
+                        'depreciation': float(sheet_data.get('depreciation')) if sheet_data.get('depreciation') else None,
+                        'other_cashflows_from_investing_activities': float(sheet_data.get('otherCashflowsFromInvestingActivities')) if sheet_data.get('otherCashflowsFromInvestingActivities') else None,
+                        'dividends_paid': float(sheet_data.get('dividendsPaid')) if sheet_data.get('dividendsPaid') else None,
+                        'change_to_inventory': float(sheet_data.get('changeToInventory')) if sheet_data.get('changeToInventory') else None,
+                        'change_to_account_receivables': float(sheet_data.get('changeToAccountReceivables')) if sheet_data.get('changeToAccountReceivables') else None,
+                        'sale_purchase_of_stock': float(sheet_data.get('salePurchaseOfStock')) if sheet_data.get('salePurchaseOfStock') else None,
+                        'other_cashflows_from_financing_activities': float(sheet_data.get('otherCashflowsFromFinancingActivities')) if sheet_data.get('otherCashflowsFromFinancingActivities') else None,
+                        'change_to_netincome': float(sheet_data.get('changeToNetincome')) if sheet_data.get('changeToNetincome') else None,
+                        'capital_expenditures': float(sheet_data.get('capitalExpenditures')) if sheet_data.get('capitalExpenditures') else None,
+                        'change_receivables': float(sheet_data.get('changeReceivables')) if sheet_data.get('changeReceivables') else None,
+                        'cash_flows_other_operating': float(sheet_data.get('cashFlowsOtherOperating')) if sheet_data.get('cashFlowsOtherOperating') else None,
+                        'exchange_rate_changes': float(sheet_data.get('exchangeRateChanges')) if sheet_data.get('exchangeRateChanges') else None,
+                        'cash_and_cash_equivalents_changes': float(sheet_data.get('cashAndCashEquivalentsChanges')) if sheet_data.get('cashAndCashEquivalentsChanges') else None,
+                        'change_in_working_capital': float(sheet_data.get('changeInWorkingCapital')) if sheet_data.get('changeInWorkingCapital') else None,
+                        'stock_based_compensation': float(sheet_data.get('stockBasedCompensation')) if sheet_data.get('stockBasedCompensation') else None,
+                        'other_non_cash_items': float(sheet_data.get('otherNonCashItems')) if sheet_data.get('otherNonCashItems') else None,
+                        'free_cash_flow': float(sheet_data.get('freeCashFlow')) if sheet_data.get('freeCashFlow') else None,
+                    }
+                )     
+
+       # Process Income Statement data
+        for sheet_type in ['yearly', 'quarterly']:
+            income_statement_data = data.get('Financials', {}).get('Income_Statement', {}).get(sheet_type, {})
+            for key, sheet_data in income_statement_data.items():
+                try:
+                    date_obj = datetime.strptime(key, '%Y-%m-%d').date()
+                except ValueError:
+                    self.stdout.write(self.style.ERROR(f"Invalid date format for {key} in {sheet_type} data."))
+                    continue
+
+                # Ensure we only process data within the last 5 years
+                if date_obj.year < datetime.now().year - 5:
+                    continue
+
+                income_statement, created = IncomeStatement.objects.update_or_create(
+                    general=stock,
+                    date=date_obj,
+                    type=sheet_type,
+                    defaults={
+                        'filing_date': datetime.strptime(sheet_data.get('filing_date'), '%Y-%m-%d').date() if sheet_data.get('filing_date') else None,
+                        'currency_symbol': sheet_data.get('currency_symbol', ''),
+                        'research_development': float(sheet_data.get('researchDevelopment')) if sheet_data.get('researchDevelopment') else None,
+                        'effect_of_accounting_charges': float(sheet_data.get('effectOfAccountingCharges')) if sheet_data.get('effectOfAccountingCharges') else None,
+                        'income_before_tax': float(sheet_data.get('incomeBeforeTax')) if sheet_data.get('incomeBeforeTax') else None,
+                        'minority_interest': float(sheet_data.get('minorityInterest')) if sheet_data.get('minorityInterest') else None,
+                        'net_income': float(sheet_data.get('netIncome')) if sheet_data.get('netIncome') else None,
+                        'selling_general_administrative': float(sheet_data.get('sellingGeneralAdministrative')) if sheet_data.get('sellingGeneralAdministrative') else None,
+                        'selling_and_marketing_expenses': float(sheet_data.get('sellingAndMarketingExpenses')) if sheet_data.get('sellingAndMarketingExpenses') else None,
+                        'gross_profit': float(sheet_data.get('grossProfit')) if sheet_data.get('grossProfit') else None,
+                        'reconciled_depreciation': float(sheet_data.get('reconciledDepreciation')) if sheet_data.get('reconciledDepreciation') else None,
+                        'ebit': float(sheet_data.get('ebit')) if sheet_data.get('ebit') else None,
+                        'ebitda': float(sheet_data.get('ebitda')) if sheet_data.get('ebitda') else None,
+                        'depreciation_and_amortization': float(sheet_data.get('depreciationAndAmortization')) if sheet_data.get('depreciationAndAmortization') else None,
+                        'non_operating_income_net_other': float(sheet_data.get('nonOperatingIncomeNetOther')) if sheet_data.get('nonOperatingIncomeNetOther') else None,
+                        'operating_income': float(sheet_data.get('operatingIncome')) if sheet_data.get('operatingIncome') else None,
+                        'other_operating_expenses': float(sheet_data.get('otherOperatingExpenses')) if sheet_data.get('otherOperatingExpenses') else None,
+                        'interest_expense': float(sheet_data.get('interestExpense')) if sheet_data.get('interestExpense') else None,
+                        'tax_provision': float(sheet_data.get('taxProvision')) if sheet_data.get('taxProvision') else None,
+                        'interest_income': float(sheet_data.get('interestIncome')) if sheet_data.get('interestIncome') else None,
+                        'net_interest_income': float(sheet_data.get('netInterestIncome')) if sheet_data.get('netInterestIncome') else None,
+                        'extraordinary_items': float(sheet_data.get('extraordinaryItems')) if sheet_data.get('extraordinaryItems') else None,
+                        'non_recurring': float(sheet_data.get('nonRecurring')) if sheet_data.get('nonRecurring') else None,
+                        'other_items': float(sheet_data.get('otherItems')) if sheet_data.get('otherItems') else None,
+                        'income_tax_expense': float(sheet_data.get('incomeTaxExpense')) if sheet_data.get('incomeTaxExpense') else None,
+                        'total_revenue': float(sheet_data.get('totalRevenue')) if sheet_data.get('totalRevenue') else None,
+                        'total_operating_expenses': float(sheet_data.get('totalOperatingExpenses')) if sheet_data.get('totalOperatingExpenses') else None,
+                        'cost_of_revenue': float(sheet_data.get('costOfRevenue')) if sheet_data.get('costOfRevenue') else None,
+                        'total_other_income_expense_net': float(sheet_data.get('totalOtherIncomeExpenseNet')) if sheet_data.get('totalOtherIncomeExpenseNet') else None,
+                        'discontinued_operations': float(sheet_data.get('discontinuedOperations')) if sheet_data.get('discontinuedOperations') else None,
+                        'net_income_from_continuing_ops': float(sheet_data.get('netIncomeFromContinuingOps')) if sheet_data.get('netIncomeFromContinuingOps') else None,
+                        'net_income_applicable_to_common_shares': float(sheet_data.get('netIncomeApplicableToCommonShares')) if sheet_data.get('netIncomeApplicableToCommonShares') else None,
+                        'preferred_stock_and_other_adjustments': float(sheet_data.get('preferredStockAndOtherAdjustments')) if sheet_data.get('preferredStockAndOtherAdjustments') else None,
+                    }
+                )
 
         print(f"Updated all data for {stock.uid}")

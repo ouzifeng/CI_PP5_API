@@ -7,11 +7,17 @@ import numpy as np
 class Command(BaseCommand):
     help = 'Fetches stock prices, adjusts for stock splits, and calculates CAGR for each stock'
 
-    def fetch_stock_prices(self, primary_ticker):
-        url = f'https://eodhd.com/api/eod/{primary_ticker}?api_token=demo&fmt=json'
+    def fetch_stock_prices(self, uid):
+        url = f'https://eodhd.com/api/eod/{uid}?api_token=649401f5eeff73.67939383&fmt=json'
         response = requests.get(url)
-        data = response.json()
-        return data
+        if response.ok:
+            try:
+                return response.json()
+            except ValueError:
+                self.stdout.write(self.style.ERROR(f'Invalid JSON response for UID: {uid}'))
+        else:
+            self.stdout.write(self.style.ERROR(f'Failed to fetch data for UID: {uid}, HTTP Status Code: {response.status_code}'))
+        return []
 
     def calculate_cagr(self, initial_value, final_value, years):
         if initial_value and final_value and years > 0:
@@ -41,7 +47,8 @@ class Command(BaseCommand):
             if splits_dividends and splits_dividends.last_split_date and splits_dividends.last_split_factor and price_data['date'] < splits_dividends.last_split_date:
                 split_factor_parts = splits_dividends.last_split_factor.split(':')
                 if len(split_factor_parts) == 2:
-                    split_factor = int(split_factor_parts[1]) / int(split_factor_parts[0])
+                    # Use float instead of int to accommodate decimal values
+                    split_factor = float(split_factor_parts[1]) / float(split_factor_parts[0])
                     adjusted_price *= split_factor
             adjusted_prices.append(adjusted_price)
         return adjusted_prices
@@ -49,7 +56,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         for general in General.objects.all():
             # Fetch stock prices and split/dividend data
-            stock_prices = self.fetch_stock_prices(general.primary_ticker)
+            stock_prices = self.fetch_stock_prices(general.uid)
             end_of_year_prices = self.filter_end_of_year_prices(stock_prices)
             splits_dividends = SplitsDividends.objects.filter(general=general).first()
 
@@ -68,5 +75,5 @@ class Command(BaseCommand):
                 }
             )
 
-            self.stdout.write(self.style.SUCCESS(f'Successfully updated stock prices for {general.primary_ticker}'))
+            self.stdout.write(self.style.SUCCESS(f'Successfully updated stock prices for {general.uid}'))
 

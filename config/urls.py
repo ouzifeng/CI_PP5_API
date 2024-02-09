@@ -4,10 +4,10 @@ from stockdata.views import StockDetailView, toggle_follow_stock, NoteListCreate
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('api/stocks/<str:primary_ticker>/', StockDetailView.as_view(), name='stock_detail'),
+    path('api/stocks/<str:uid>/', StockDetailView.as_view(), name='stock_detail'),
     path('auth/', include('dj_rest_auth.urls')),
     path('api/user/', include('usermanagement.urls')),
-    path('api/stocks/<str:primary_ticker>/toggle_follow/', toggle_follow_stock, name='toggle_follow_stock'),
+    path('api/stocks/<str:uid>/toggle_follow/', toggle_follow_stock, name='toggle_follow_stock'),
     path('api/notes/', NoteListCreate.as_view(), name='note-list-create'),
     path('api/notes/<int:pk>/', NoteDetail.as_view(), name='note-detail'), 
     path('api/followed_stocks/', FollowedStocksView.as_view(), name='followed-stocks'),
