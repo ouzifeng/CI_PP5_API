@@ -404,7 +404,7 @@ class BalanceSheet(models.Model):
     )
     date = models.DateField()
     filing_date = models.DateField(null=True, blank=True)
-    currency_symbol = models.CharField(max_length=10)
+    currency_symbol = models.CharField(max_length=10, null=True, blank=True)
     total_assets = models.DecimalField(
         max_digits=15,
         decimal_places=2,
