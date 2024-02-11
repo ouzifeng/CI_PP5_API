@@ -4,6 +4,7 @@ from django.utils.dateparse import parse_date
 import requests
 from datetime import datetime, timedelta
 from django.utils.timezone import make_aware, now
+import os
 
 def parse_date(date_string):
     try:
@@ -39,7 +40,7 @@ class Command(BaseCommand):
     help = 'Imports stock data from the EOD Historical Data API'
 
     def handle(self, *args, **kwargs):
-        api_token = '649401f5eeff73.67939383'
+        api_token = config('API_TOKEN')
         # import_tickers(api_token)
         stocks = General.objects.filter(uid__endswith='.LSE')
 

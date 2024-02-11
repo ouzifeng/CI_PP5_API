@@ -403,375 +403,12 @@ class BalanceSheet(models.Model):
         related_name='balance_sheets'
     )
     date = models.DateField()
-    filing_date = models.DateField(null=True, blank=True)
-    currency_symbol = models.CharField(max_length=10, null=True, blank=True)
-    total_assets = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    intangible_assets = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    earning_assets = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    other_current_assets = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    total_liabilities = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    total_stockholder_equity = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    deferred_long_term_liabilities = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    other_current_liabilities = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    common_stock = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    capital_stock = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    retained_earnings = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    other_liabilities = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    goodwill = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    other_assets = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    cash = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    cash_and_equivalents = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    total_current_liabilities = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    current_deferred_revenue = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    net_debt = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    short_term_debt = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    short_long_term_debt = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    short_long_term_debt_total = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    other_stockholder_equity = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    property_plant_equipment = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    total_current_assets = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    long_term_investments = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    net_tangible_assets = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    short_term_investments = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    net_receivables = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    long_term_debt = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    inventory = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    accounts_payable = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    total_permanent_equity = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    noncontrolling_interest_in_consolidated_entity = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    temporary_equity_redeemable_noncontrolling_interests = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    accumulated_other_comprehensive_income = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    additional_paid_in_capital = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    common_stock_total_equity = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    preferred_stock_total_equity = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    retained_earnings_total_equity = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    treasury_stock = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    accumulated_amortization = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    non_current_assets_other = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    deferred_long_term_asset_charges = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    non_current_assets_total = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    capital_lease_obligations = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    long_term_debt_total = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    non_current_liabilities_other = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    non_current_liabilities_total = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    negative_goodwill = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    warrants = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    preferred_stock_redeemable = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    capital_surplus = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    liabilities_and_stockholders_equity = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    cash_and_short_term_investments = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    property_plant_and_equipment_gross = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    property_plant_and_equipment_net = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    accumulated_depreciation = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    net_working_capital = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-    net_invested_capital = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
     common_stock_shares_outstanding = models.DecimalField(
         max_digits=15,
         decimal_places=2,
         null=True,
         blank=True
     )
-
     type = models.CharField(
         max_length=10,
         choices=BALANCE_SHEET_TYPE_CHOICES,
@@ -793,37 +430,12 @@ class CashFlow(models.Model):
         related_name='cash_flows'
     )
     date = models.DateField()
-    filing_date = models.DateField(null=True, blank=True)
-    currency_symbol = models.CharField(max_length=10, blank=True, null=True)
-    investments = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    change_to_liabilities = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    total_cashflows_from_investing_activities = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    net_borrowings = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    total_cash_from_financing_activities = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    change_to_operating_activities = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    net_income = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    change_in_cash = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    begin_period_cash_flow = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    end_period_cash_flow = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    total_cash_from_operating_activities = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    issuance_of_capital_stock = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    depreciation = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    other_cashflows_from_investing_activities = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    dividends_paid = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    change_to_inventory = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    change_to_account_receivables = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    sale_purchase_of_stock = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    other_cashflows_from_financing_activities = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    change_to_netincome = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    capital_expenditures = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    change_receivables = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    cash_flows_other_operating = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    exchange_rate_changes = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    cash_and_cash_equivalents_changes = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    change_in_working_capital = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    stock_based_compensation = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    other_non_cash_items = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    free_cash_flow = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    dividends_paid = models.DecimalField(
+        max_digits=15,
+        decimal_places=2,
+        null=True,
+        blank=True
+    )
     type = models.CharField(
         max_length=10,
         choices=CASH_FLOW_TYPE_CHOICES,
@@ -845,39 +457,24 @@ class IncomeStatement(models.Model):
         related_name='income_statements'
     )
     date = models.DateField()
-    filing_date = models.DateField(null=True, blank=True)
-    currency_symbol = models.CharField(max_length=10, null=True, blank=True)
-    research_development = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    effect_of_accounting_charges = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    income_before_tax = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    minority_interest = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    net_income = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    selling_general_administrative = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    selling_and_marketing_expenses = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    gross_profit = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    reconciled_depreciation = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    ebit = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    ebitda = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    depreciation_and_amortization = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    non_operating_income_net_other = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    operating_income = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    other_operating_expenses = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    interest_expense = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    tax_provision = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    interest_income = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    net_interest_income = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    extraordinary_items = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    non_recurring = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    other_items = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    income_tax_expense = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    total_revenue = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    total_operating_expenses = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    cost_of_revenue = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    total_other_income_expense_net = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    discontinued_operations = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    net_income_from_continuing_ops = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    net_income_applicable_to_common_shares = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    preferred_stock_and_other_adjustments = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    total_revenue = models.DecimalField(
+        max_digits=15,
+        decimal_places=2,
+        null=True,
+        blank=True
+    )
+    gross_profit = models.DecimalField(
+        max_digits=15,
+        decimal_places=2,
+        null=True,
+        blank=True
+    )
+    net_income = models.DecimalField(
+        max_digits=15,
+        decimal_places=2,
+        null=True,
+        blank=True
+    )
 
     type = models.CharField(
         max_length=10,
