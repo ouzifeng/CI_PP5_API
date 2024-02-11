@@ -8,20 +8,20 @@ class General(models.Model):
     type = models.CharField(max_length=50, null=True, blank=True)
     name = models.CharField(max_length=200, null=True, blank=True)
     exchange = models.CharField(max_length=50, null=True, blank=True)
-    currency_code = models.CharField(max_length=10, null=True, blank=True)
+    currency_code = models.CharField(max_length=100, null=True, blank=True)
     currency_name = models.CharField(max_length=50, null=True, blank=True)
-    currency_symbol = models.CharField(max_length=10, null=True, blank=True)
+    currency_symbol = models.CharField(max_length=100, null=True, blank=True)
     country_name = models.CharField(max_length=100, null=True, blank=True)
-    country_iso = models.CharField(max_length=10, null=True, blank=True)
+    country_iso = models.CharField(max_length=100, null=True, blank=True)
     isin = models.CharField(max_length=20, null=True, blank=True)
     uid = models.CharField(
-        max_length=10,
+        max_length=100,
         unique=True,
         null=True,
         blank=True
     )
     primary_ticker = models.CharField(
-        max_length=10,
+        max_length=100,
         null=True,
         blank=True
     )
@@ -411,7 +411,7 @@ class BalanceSheet(models.Model):
         blank=True
     )
     type = models.CharField(
-        max_length=10,
+        max_length=100,
         choices=BALANCE_SHEET_TYPE_CHOICES,
         default='yearly',
     )
@@ -438,7 +438,7 @@ class CashFlow(models.Model):
         blank=True
     )
     type = models.CharField(
-        max_length=10,
+        max_length=100,
         choices=CASH_FLOW_TYPE_CHOICES,
         default='yearly',
     )
@@ -478,7 +478,7 @@ class IncomeStatement(models.Model):
     )
 
     type = models.CharField(
-        max_length=10,
+        max_length=100,
         choices=BALANCE_SHEET_TYPE_CHOICES,
         default='yearly',
     )

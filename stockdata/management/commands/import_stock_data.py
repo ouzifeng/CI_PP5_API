@@ -40,16 +40,20 @@ def import_tickers(api_token, exchange='LSE'):
 class Command(BaseCommand):
     help = 'Imports stock data from the EOD Historical Data API'
 
+    def add_arguments(self, parser):
+        parser.add_argument('start_index', nargs='?', type=int, default=0)
+        
     def handle(self, *args, **kwargs):
         api_token = config('API_TOKEN')
         #import_tickers(api_token)
+        start_index = kwargs['start_index']
 
         # Fetch all stocks listed on the LSE from the General table
         stocks = General.objects.filter(uid__endswith='.LSE')
 
         print(f"Total stocks found: {stocks.count()}")
 
-        for i, stock in enumerate(stocks, start=1):
+        for i, stock in enumerate(stocks, start=start_index + 1):
             print(f"Processing stock {i}/{stocks.count()}: {stock.uid}")
             url = f'https://eodhd.com/api/fundamentals/{stock.uid}?api_token={api_token}&fmt=json'
             response = requests.get(url)
@@ -59,29 +63,29 @@ class Command(BaseCommand):
             else:
                 print(f"Failed to fetch data for {stock.uid}. Status code: {response.status_code}")
 
-        def update_stock(self, stock, data):
-            # Assuming 'General' information is directly under the root of 'data'
-            # Adjust the paths according to the actual structure of your API response
-            general_info = data.get('General', {})
-            logo_url = general_info.get('LogoURL')
+    def update_stock(self, stock, data):
+        # Assuming 'General' information is directly under the root of 'data'
+        # Adjust the paths according to the actual structure of your API response
+        general_info = data.get('General', {})
+        logo_url = general_info.get('LogoURL')
+        
+        # Check if the logo URL exists and the stock does not have a logo already
+        if logo_url and not stock.logo:
+            # Construct the full URL for the logo image
+            full_logo_url = f"https://eodhd.com{logo_url}"
             
-            # Check if the logo URL exists and the stock does not have a logo already
-            if logo_url and not stock.logo:
-                # Construct the full URL for the logo image
-                full_logo_url = f"https://eodhd.com{logo_url}"
-                
-                try:
-                    response = requests.get(full_logo_url, stream=True)
-                    if response.status_code == 200:
-                        # Extract the file name from the URL
-                        logo_name = os.path.basename(logo_url)
-                        # Save the logo to the 'logos/' directory
-                        file_path = default_storage.save(f'logos/{logo_name}', ContentFile(response.content))
-                        stock.logo = file_path
-                        stock.save()
-                        print(f"Downloaded and saved logo for {stock.code}")
-                except requests.RequestException as e:
-                    print(f"Failed to download logo for {stock.code}: {e}")        
+            try:
+                response = requests.get(full_logo_url, stream=True)
+                if response.status_code == 200:
+                    # Extract the file name from the URL
+                    logo_name = os.path.basename(logo_url)
+                    # Save the logo to the 'logos/' directory
+                    file_path = default_storage.save(f'logos/{logo_name}', ContentFile(response.content))
+                    stock.logo = file_path
+                    stock.save()
+                    print(f"Downloaded and saved logo for {stock.code}")
+            except requests.RequestException as e:
+                print(f"Failed to download logo for {stock.code}: {e}")        
         
         # Update the General model
         # Here 'stock' is an instance of the General model already, so we directly update its fields
@@ -282,7 +286,6 @@ class Command(BaseCommand):
                     date=date_obj,
                     type=sheet_type,
                     defaults={
-                        'income_before_tax': float(sheet_data.get('incomeBeforeTax')) if sheet_data.get('incomeBeforeTax') else None,
                         'net_income': float(sheet_data.get('netIncome')) if sheet_data.get('netIncome') else None,
                         'gross_profit': float(sheet_data.get('grossProfit')) if sheet_data.get('grossProfit') else None,
                         'total_revenue': float(sheet_data.get('totalRevenue')) if sheet_data.get('totalRevenue') else None,
