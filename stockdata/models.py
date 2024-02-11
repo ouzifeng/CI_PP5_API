@@ -32,6 +32,7 @@ class General(models.Model):
     phone = models.CharField(max_length=50, null=True, blank=True)
     web_url = models.URLField(null=True, blank=True)
     full_time_employees = models.IntegerField(null=True, blank=True)
+    logo = models.ImageField(upload_to='logos/', null=True, blank=True)
     followers = models.ManyToManyField(
         settings.AUTH_USER_MODEL, 
         related_name='followed_stocks', 
