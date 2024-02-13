@@ -552,4 +552,26 @@ class DividendYieldData(models.Model):
         return f"Dividend Yield Data for {self.general.name}"
 
     class Meta:
-        verbose_name_plural = "Dividend Yield Data"        
+        verbose_name_plural = "Dividend Yield Data"
+        
+
+class Prices(models.Model):
+    general = models.OneToOneField(
+        General,
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name='prices'
+    )
+    close = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True)
+    prev_close = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True)
+    change = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    change_p = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    
+    def __str__(self):
+        return f"Stock Prices for {self.general.name} ({self.general.code})"
+    
+    class Meta:
+        verbose_name_plural = "Stock Prices"    
+    
+
+        

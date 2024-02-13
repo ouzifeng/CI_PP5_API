@@ -51,7 +51,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         api_token = config('API_TOKEN')
         #import_tickers(api_token)
-        start_index = kwargs['start_index']
+        #start_index = kwargs['start_index']
 
         # Fetch all stocks listed on the LSE from the General table
         stocks = General.objects.filter(uid__endswith='.LSE')

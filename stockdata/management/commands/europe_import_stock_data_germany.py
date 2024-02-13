@@ -18,7 +18,7 @@ def parse_date(date_string):
     except ValueError:
         return None
     
-def import_tickers(api_token, exchange='XERTA'):
+def import_tickers(api_token, exchange='XETRA'):
     ticker_url = f'https://eodhd.com/api/exchange-symbol-list/{exchange}?api_token={api_token}&fmt=json'
     response = requests.get(ticker_url)
 
@@ -53,7 +53,7 @@ class Command(BaseCommand):
         import_tickers(api_token)
         start_index = kwargs['start_index']
 
-        stocks = General.objects.filter(uid__endswith='.XERTA')
+        stocks = General.objects.filter(uid__endswith='.XETRA')
 
         print(f"Total stocks found: {stocks.count()}")
 
