@@ -98,6 +98,7 @@ class StockSearchSerializer(serializers.ModelSerializer):
         
 class DividendSerializer(serializers.Serializer):
     # Fields from the General model
+    uid = serializers.CharField()
     name = serializers.CharField()
     primary_ticker = serializers.CharField()
     country_iso = serializers.CharField()

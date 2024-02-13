@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.db.models import F
-from .models import General
+from stockdata.models import General
 
 class Command(BaseCommand):
     help = 'Deletes stocks where uid != primary_ticker and primary_ticker is not blank'

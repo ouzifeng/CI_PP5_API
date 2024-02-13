@@ -562,8 +562,8 @@ class Prices(models.Model):
         primary_key=True,
         related_name='prices'
     )
-    close = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True)
-    prev_close = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True)
+    close = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    prev_close = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     change = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     change_p = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     

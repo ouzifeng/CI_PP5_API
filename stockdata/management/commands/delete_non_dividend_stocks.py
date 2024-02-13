@@ -1,23 +1,23 @@
 from django.core.management.base import BaseCommand
 from django.db.models import Q
-from .models import General, Highlights
+from stockdata.models import General, Highlights
 
 class Command(BaseCommand):
-    help = 'Deletes stocks with Highlights dividend_share blank or 0.00'
+    help = 'Deletes stocks with Highlights dividend_yield blank or 0.00'
 
     def handle(self, *args, **kwargs):
         stocks_to_delete = General.objects.filter(
-            Q(highlights__dividend_share__isnull=True) | 
-            Q(highlights__dividend_share=0.00)
+            Q(highlights__dividend_yield__isnull=True) | 
+            Q(highlights__dividend_yield=0.00)
         )
 
         count = stocks_to_delete.count()
 
         if count == 0:
-            self.stdout.write(self.style.SUCCESS('No stocks to delete based on dividend_share criteria.'))
+            self.stdout.write(self.style.SUCCESS('No stocks to delete based on dividend_yield criteria.'))
             return
 
-        self.stdout.write(f'Found {count} stocks with dividend_share blank or 0.00.')
+        self.stdout.write(f'Found {count} stocks with dividend_yield blank or 0.00.')
 
         confirm = input('Do you want to delete these stocks? [yes/no]: ')
 

@@ -1,7 +1,7 @@
 import requests
 import json
 
-url = 'https://eodhd.com/api/fundamentals/AAPL.US?filter=General::LogoURL&&api_token=demo&fmt=json'
+url = 'https://eodhd.com/api/eod-bulk-last-day/US?api_token=zdvzvzd&symbols=AVON&fmt=json'
 data = requests.get(url).json()
 
 # Pretty print the JSON data
