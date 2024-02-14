@@ -135,8 +135,8 @@ class DividendDataListView(generics.ListAPIView):
             queryset = queryset.filter(highlights__dividend_yield__gte=float(min_yield),
                                        highlights__dividend_yield__lte=float(max_yield))
         if min_payout and max_payout:
-            queryset = queryset.filter(highlights__payout_ratio__gte=float(min_payout),
-                                       highlights__payout_ratio__lte=float(max_payout))
+            queryset = queryset.filter(splits_dividends__payout_ratio__gte=float(min_payout),
+                                       splits_dividends__payout_ratio__lte=float(max_payout))
         if min_pe and max_pe:
             queryset = queryset.filter(highlights__pe_ratio__gte=float(min_pe),
                                        highlights__pe_ratio__lte=float(max_pe))
