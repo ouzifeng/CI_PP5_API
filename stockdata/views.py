@@ -123,7 +123,24 @@ class DividendDataListView(generics.ListAPIView):
     pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
-        queryset = General.objects.filter(highlights__dividend_yield__gt=0)
+        min_yield = self.request.query_params.get('min_dividend_yield')
+        max_yield = self.request.query_params.get('max_dividend_yield')
+        min_payout = self.request.query_params.get('min_payout_ratio')
+        max_payout = self.request.query_params.get('max_payout_ratio')
+        min_pe = self.request.query_params.get('min_pe_ratio')
+        max_pe = self.request.query_params.get('max_pe_ratio')
+
+        queryset = General.objects.all()
+        if min_yield and max_yield:
+            queryset = queryset.filter(highlights__dividend_yield__gte=float(min_yield),
+                                       highlights__dividend_yield__lte=float(max_yield))
+        if min_payout and max_payout:
+            queryset = queryset.filter(highlights__payout_ratio__gte=float(min_payout),
+                                       highlights__payout_ratio__lte=float(max_payout))
+        if min_pe and max_pe:
+            queryset = queryset.filter(highlights__pe_ratio__gte=float(min_pe),
+                                       highlights__pe_ratio__lte=float(max_pe))
+
         return queryset
     
     
