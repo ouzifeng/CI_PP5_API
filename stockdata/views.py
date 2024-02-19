@@ -28,7 +28,7 @@ class StockDetailView(generics.RetrieveAPIView):
             'cash_flows',
             'stock_prices',
             'dividend_yield_data'
-        ).all()
+        ).select_related('prices').all()
 
     def get(self, request, *args, **kwargs):
         instance = self.get_object()

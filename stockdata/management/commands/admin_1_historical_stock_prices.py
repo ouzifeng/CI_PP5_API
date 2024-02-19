@@ -8,7 +8,8 @@ class Command(BaseCommand):
     help = 'Fetches stock prices, adjusts for stock splits, and calculates CAGR for each stock'
 
     def fetch_stock_prices(self, uid):
-        url = f'https://eodhd.com/api/eod/{uid}?api_token=649401f5eeff73.67939383&fmt=json'
+        api_token = config('API_TOKEN')
+        url = f'https://eodhd.com/api/eod/{uid}?api_token={api_token}&fmt=json'
         response = requests.get(url)
         if response.ok:
             try:

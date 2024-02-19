@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import General, Highlights, Valuation, Technicals, SplitsDividends, AnalystRatings, Description, IncomeStatement, CAGR, CashFlow, BalanceSheet, Note, StockPrices, DividendYieldData
+from .models import General, Highlights, Valuation, Technicals, SplitsDividends, AnalystRatings, Description, IncomeStatement, CAGR, CashFlow, BalanceSheet, Note, StockPrices, DividendYieldData, Prices
 from django.contrib.auth.models import User
 
 class IncomeStatementSerializer(serializers.ModelSerializer):
@@ -58,6 +58,13 @@ class StockPricesSerializer(serializers.ModelSerializer):
         model = StockPrices
         fields = '__all__'
 
+
+class PricesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Prices
+        fields = '__all__'
+
+
 class DividendYieldDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = DividendYieldData
@@ -76,6 +83,7 @@ class GeneralSerializer(serializers.ModelSerializer):
     cash_flows = CashFlowSerializer(many=True, read_only=True)    
     stock_prices = StockPricesSerializer(many=True, read_only=True)
     dividend_yield_data = DividendYieldDataSerializer(read_only=True)    
+    prices = PricesSerializer(read_only=True)
 
     class Meta:
         model = General
@@ -97,7 +105,6 @@ class StockSearchSerializer(serializers.ModelSerializer):
         
         
 class DividendSerializer(serializers.Serializer):
-    # Fields from the General model
     uid = serializers.CharField()
     name = serializers.CharField()
     primary_ticker = serializers.CharField()
@@ -106,7 +113,6 @@ class DividendSerializer(serializers.Serializer):
     exchange = serializers.CharField()
     currency_symbol = serializers.CharField()
 
-    # Fields from the Highlights model
     market_capitalization = serializers.DecimalField(
         max_digits=15,
         decimal_places=2,
@@ -123,7 +129,6 @@ class DividendSerializer(serializers.Serializer):
         source='highlights.dividend_yield'
     )
 
-    # Fields from the SplitsDividends model
     forward_annual_dividend_yield = serializers.DecimalField(
         max_digits=10,
         decimal_places=4,
@@ -138,7 +143,6 @@ class DividendSerializer(serializers.Serializer):
         source='splits_dividends.dividend_date'
     )
 
-    # Fields from the DividendYieldData model
     cagr_5_years = serializers.DecimalField(
         max_digits=10,
         decimal_places=4,
