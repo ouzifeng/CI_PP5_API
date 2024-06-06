@@ -2,11 +2,17 @@ from django.core.management.base import BaseCommand
 from django.db.models import F
 from stockdata.models import General
 
+
 class Command(BaseCommand):
-    help = 'Deletes stocks where uid != primary_ticker and primary_ticker is not blank'
+    help = (
+        'Deletes stocks where uid != primary_ticker and primary_ticker is not '
+        'blank'
+    )
 
     def handle(self, *args, **kwargs):
-        stocks_to_delete = General.objects.filter(primary_ticker__isnull=False).exclude(uid=F('primary_ticker'))
+        stocks_to_delete = General.objects.filter(
+            primary_ticker__isnull=False
+        ).exclude(uid=F('primary_ticker'))
 
         count = stocks_to_delete.count()
 
@@ -14,7 +20,10 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS('No stocks to delete.'))
             return
 
-        self.stdout.write(f'{count} stocks found where uid != primary_ticker and primary_ticker is not blank.')
+        self.stdout.write(
+            f'{count} stocks found where uid != primary_ticker and '
+            'primary_ticker is not blank.'
+        )
 
         confirm = input('Do you want to delete these stocks? [yes/no]: ')
 
@@ -23,7 +32,12 @@ class Command(BaseCommand):
             return
 
         for stock in stocks_to_delete.iterator():
-            self.stdout.write(f'Deleting stock: {stock.name} ({stock.code}) with UID: {stock.uid} and Primary Ticker: {stock.primary_ticker}')
+            self.stdout.write(
+                f'Deleting stock: {stock.name} ({stock.code}) with UID: '
+                f'{stock.uid} and Primary Ticker: {stock.primary_ticker}'
+            )
             stock.delete()
 
-        self.stdout.write(self.style.SUCCESS(f'Successfully deleted {count} stocks.'))
+        self.stdout.write(
+            self.style.SUCCESS(f'Successfully deleted {count} stocks.')
+        )
