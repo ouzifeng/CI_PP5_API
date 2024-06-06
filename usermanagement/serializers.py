@@ -1,14 +1,15 @@
 from rest_framework import serializers
 from .models import CustomUser
 
+
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ('email', 'password', 'first_name', 'last_name')  
+        fields = ('email', 'password', 'first_name', 'last_name')
         extra_kwargs = {
             'password': {'write_only': True},
-            'first_name': {'required': True},  
-            'last_name': {'required': True},   
+            'first_name': {'required': True},
+            'last_name': {'required': True},
         }
 
     def create(self, validated_data):
@@ -19,5 +20,3 @@ class CustomUserSerializer(serializers.ModelSerializer):
             last_name=validated_data.get('last_name', '')
         )
         return user
-    
-    
