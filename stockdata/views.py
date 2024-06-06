@@ -4,7 +4,10 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from .models import General, Note
-from .serializers import GeneralSerializer, NoteSerializer, StockSearchSerializer, DividendSerializer
+from .serializers import (
+    GeneralSerializer, NoteSerializer, StockSearchSerializer,
+    DividendSerializer
+)
 from .permissions import IsOwnerOrReadOnly
 from rest_framework.pagination import PageNumberPagination
 
@@ -33,18 +36,18 @@ class StockDetailView(generics.RetrieveAPIView):
     def get(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        
+
         if request.user.is_authenticated:
             user = request.user
             is_following = instance.followers.filter(id=user.id).exists()
         else:
             is_following = False
-             
-        
+
         data = serializer.data
         data['is_following'] = is_following
-        
+
         return Response(data)
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -52,7 +55,10 @@ def toggle_follow_stock(request, uid):
     try:
         stock = General.objects.get(uid=uid)
     except General.DoesNotExist:
-        return Response({"error": "Stock not found"}, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {"error": "Stock not found"},
+            status=status.HTTP_404_NOT_FOUND
+        )
 
     user = request.user
 
@@ -77,20 +83,22 @@ class NoteListCreate(generics.ListCreateAPIView):
         print("Received data for new note:", serializer.validated_data)
         serializer.save(user=self.request.user)
 
+
 class NoteDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Note.objects.all()
     serializer_class = NoteSerializer
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
-    
-    
+
+
 class FollowedStocksView(generics.ListAPIView):
     serializer_class = GeneralSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
-        return General.objects.filter(followers=user)    
-    
+        return General.objects.filter(followers=user)
+
+
 class FollowedStocksList(generics.ListAPIView):
     serializer_class = GeneralSerializer
     permission_classes = [IsAuthenticated]
@@ -98,8 +106,8 @@ class FollowedStocksList(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         return General.objects.filter(followers=user)
-    
-    
+
+
 class StockSearchView(generics.ListAPIView):
     serializer_class = StockSearchSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -108,15 +116,18 @@ class StockSearchView(generics.ListAPIView):
         queryset = General.objects.all()
         query = self.request.query_params.get('query', None)
         if query is not None:
-            queryset = queryset.filter(Q(code__icontains=query) | Q(name__icontains=query))
-        return queryset    
-    
+            queryset = queryset.filter(
+                Q(code__icontains=query) | Q(name__icontains=query)
+            )
+        return queryset
+
+
 class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 10 
+    page_size = 10
     page_size_query_param = 'page_size'
-    max_page_size = 100    
-    
-    
+    max_page_size = 100
+
+
 class DividendDataListView(generics.ListAPIView):
     serializer_class = DividendSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -132,16 +143,19 @@ class DividendDataListView(generics.ListAPIView):
 
         queryset = General.objects.all()
         if min_yield and max_yield:
-            queryset = queryset.filter(highlights__dividend_yield__gte=float(min_yield),
-                                       highlights__dividend_yield__lte=float(max_yield))
+            queryset = queryset.filter(
+                highlights__dividend_yield__gte=float(min_yield),
+                highlights__dividend_yield__lte=float(max_yield)
+            )
         if min_payout and max_payout:
-            queryset = queryset.filter(splits_dividends__payout_ratio__gte=float(min_payout),
-                                       splits_dividends__payout_ratio__lte=float(max_payout))
+            queryset = queryset.filter(
+                splits_dividends__payout_ratio__gte=float(min_payout),
+                splits_dividends__payout_ratio__lte=float(max_payout)
+            )
         if min_pe and max_pe:
-            queryset = queryset.filter(highlights__pe_ratio__gte=float(min_pe),
-                                       highlights__pe_ratio__lte=float(max_pe))
+            queryset = queryset.filter(
+                highlights__pe_ratio__gte=float(min_pe),
+                highlights__pe_ratio__lte=float(max_pe)
+            )
 
         return queryset
-    
-    
-    
