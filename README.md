@@ -16,17 +16,19 @@ The project is split into a react based frontend which can be found [here](https
 
 ## Project Scope
 
-The scope of this project is to build a 
+The scope of this project is to build a robust backend that can serve structured company financial data over an API
 
 
+### Site Owner and User Goals
 
+As the site owner and user are the same, their gials are the same. There is no plan for them to license this software outside of their own company
 
+* Discover stocks that fit their investment profile
+* Help build a dividend paying stock portfolio for their family office, with a focus on European equities
+* Keep track of investment ideas and thoughts on companies they have researched
+* Include a wide range of key fundamental data for each company, where available. 
 
-
-
-
-
-
+Frontend specific goals, such as logging in, SSO, filters and such are outlined in the frontend documentation found [here](https://www.sellyourtackle.co.uk/)
 
 
 ## Project Challenges
