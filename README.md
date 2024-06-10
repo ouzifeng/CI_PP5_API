@@ -73,3 +73,23 @@ Since the customer is not interested in companies that do not pay a dividend, a 
 
 This is not an exact science and some companies that should not make it into the database will fall through the cracks, but the client was happy with the approach and can accept a 5% degree of error
 
+## Missing Data Points
+
+Although very inclusive, the EOD API did not have all the fundamental datapoints required to meet their requirements. Because of this, additional management command files had to be built to process existing data in the database to meet these gaps
+
+### 1. Historical Stock Prices
+
+To work out the compounded annual growth rates (or CAGR, a term often used in financial planning), a command had to be built which imported the stock price 5 years ago and the price at the end of the last full year. To complicate matters, companies also sometimes perform stock splits, i.e. a 10:1 stock split would mean that the stock price goes from $100 to $10, so it might look like a oxmpanies share price had declined unless stock splits were taken into account. This command had to also take into accunt any stock splits and adjust the stock prices accordingly to give an accurate result
+
+### 2. Dividend CAGR
+
+Similarly to stock price CAGR, yield CAGR over 5 years is also an important metric when analysing the financial health of a company, the dividend_yield command does just that
+
+### 3. Income Sheet CAGR
+
+This management command works out the 5 year CAGR for important income statement metrics like revenue and net income
+
+### 4. Stock Prices
+
+Company fundamental data does not change on a daily basis, but stock prices do. The fundamental data api has a strict daily limit of 10k companies, however the stock prices API allows a whole exchanges stock prices to be downloaded for just 1,000 requests. The stock_prices command imports all sotck prices across all exchanges, and can be setup to run as a cronjob daily
+
