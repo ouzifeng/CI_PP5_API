@@ -39,4 +39,37 @@ The decision was made to use [End Of Day](https://eodhd.com/) fundamental data A
 
 Because of this, various management commands had to be built to remove unnecessary stocks from the database once stocks had been imported over the API. Due to limitations in EOD's API, there is no way to filter out these companies before they have been imported.
 
-### Challenge 1
+### Challenge 1 - API Limitations
+
+API resquests are limited to 100,000 calls a day, and fundamental data for each copmany consumes 10 credits, limiting the total number of companies we were allowed to import/update over the API to 10,000 per day. There are some 100,000 European tickers available, so scripts had to be developed to import companies on an exchange basis. The management command to complete this is called europe_import_stock_data_uk.py. To change the exchange you can clone the file and change this function: 
+
+def import_tickers(api_token, exchange='LSE'):
+    ticker_url = (
+        f'https://eodhd.com/api/exchange-symbol-list/{exchange}?api_token='
+        f'{api_token}&fmt=json'
+    )
+    response = requests.get(ticker_url)
+
+By swapping 'LSE' to a different exchange. A list of exhcnages can be found [here](https://eodhd.com/list-of-stock-markets):
+
+### Challenge 2 - Removing Non-common Stocks
+
+Companies are often listed on multiple exchanges, e.g. you can purchase Apple in most countries stock exchanges across the world, not just the Nasdaq. These are known as non-primary listings. Since the customer only wants primary listings, as this is where the fundamental data is to be stored, a range of clean up commands had to be built. 
+
+The first one is the management command delete_non_common_stocks.py, this removes any stocks from the database where the stock type is not common
+
+### Challenge 3 - Removing Non Primary Ticker Stocks
+
+The second management command to help remove unwanted stocks is the delete_non_primary_ticker_stocks.py command, which removes any company whose uid != primary_ticker and primary_ticker is not blank
+
+### Challenge 4 - Removing Stock Duplicates Where One Listing Has an Empty Sector
+
+As EOD do not provide a way of defining what a primary listing is, further cleansing had to be built. An additional command delete_duplicate_stocks_empty_sector.py, finds duplicate stocks based on their tickers, and if one has an empty sector, this then deletes that version of it as it unlikely to be the primary listing
+
+### Challenge 5 - Remove Non-Yield Paying Stocks
+
+Since the customer is not interested in companies that do not pay a dividend, a final management command was built to remove any stocks what did not pay a dividend
+
+
+This is not an exact science and some companies that should not make it into the database will fall through the cracks, but the client was happy with the approach and can accept a 5% degree of error
+
