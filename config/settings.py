@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'corsheaders',
-    'rest_framework_simplejwt.token_blacklist',  
+    'rest_framework_simplejwt.token_blacklist',
+    'drf_yasg',  
 ]
 
 # Authentication Backends

@@ -1,25 +1,34 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import CustomUserSerializer
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view, permission_classes
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 from django.core.mail import send_mail
 from django.contrib.auth.tokens import default_token_generator
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.conf import settings
-from .email import send_password_reset_email, send_verification_email
 from django.contrib.auth import get_user_model
-from .models import CustomUser
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from rest_framework.authtoken.models import Token
+from .serializers import CustomUserSerializer
+from .email import send_password_reset_email, send_verification_email
+from .models import CustomUser
+
+User = get_user_model()
 
 
 class CustomUserCreate(APIView):
     permission_classes = [AllowAny]
 
+    @swagger_auto_schema(
+        operation_description="Create a new user",
+        request_body=CustomUserSerializer,
+        responses={201: "User created successfully", 400: "Bad request"}
+    )
     def post(self, request):
         reg_serializer = CustomUserSerializer(data=request.data)
         if reg_serializer.is_valid():
@@ -32,6 +41,19 @@ class CustomUserCreate(APIView):
         )
 
 
+@swagger_auto_schema(
+    method='post',
+    operation_description="Send a contact email",
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'name': openapi.Schema(type=openapi.TYPE_STRING),
+            'email': openapi.Schema(type=openapi.TYPE_STRING),
+            'message': openapi.Schema(type=openapi.TYPE_STRING)
+        }
+    ),
+    responses={200: "Email sent successfully", 500: "Internal server error"}
+)
 @api_view(['POST'])
 def send_contact_email(request):
     name = request.data.get('name')
@@ -57,9 +79,21 @@ def send_contact_email(request):
         )
 
 
-User = get_user_model()
-
-
+@swagger_auto_schema(
+    method='post',
+    operation_description="Request password reset",
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'email': openapi.Schema(type=openapi.TYPE_STRING)
+        }
+    ),
+    responses={
+        200: "Password reset email sent",
+        400: "User with this email does not exist",
+        400: "Email is not provided"
+    }
+)
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def custom_password_reset_request(request):
@@ -83,35 +117,49 @@ def custom_password_reset_request(request):
     )
 
 
+@swagger_auto_schema(
+    method='post',
+    operation_description="Confirm password reset",
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'uid': openapi.Schema(type=openapi.TYPE_STRING),
+            'token': openapi.Schema(type=openapi.TYPE_STRING),
+            'new_password1': openapi.Schema(type=openapi.TYPE_STRING),
+            'new_password2': openapi.Schema(type=openapi.TYPE_STRING),
+        }
+    ),
+    responses={
+        200: "Password has been reset successfully",
+        400: "Invalid token",
+        400: "Passwords do not match",
+        400: "Invalid UID"
+    }
+)
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def password_reset_confirm(request):
     try:
-        # Decode UID and token from the request
         uidb64 = request.data.get('uid')
         token = request.data.get('token')
         new_password1 = request.data.get('new_password1')
         new_password2 = request.data.get('new_password2')
 
-        # Decode the uidb64 to uid
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
 
-        # Check if the token is valid for the user
         if not default_token_generator.check_token(user, token):
             return Response(
                 {"error": "Invalid token"},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Check if the passwords are valid and match
         if new_password1 != new_password2:
             return Response(
                 {"error": "Passwords do not match"},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Set new password
         user.set_password(new_password1)
         user.save()
 
@@ -126,6 +174,29 @@ def password_reset_confirm(request):
         )
 
 
+@swagger_auto_schema(
+    method='get',
+    operation_description="Verify email",
+    manual_parameters=[
+        openapi.Parameter(
+            'uidb64',
+            openapi.IN_PATH,
+            description="UID encoded in base64",
+            type=openapi.TYPE_STRING
+        ),
+        openapi.Parameter(
+            'token',
+            openapi.IN_PATH,
+            description="Verification token",
+            type=openapi.TYPE_STRING
+        )
+    ],
+    responses={
+        200: "Email verified successfully",
+        400: "Verification link is invalid",
+        400: "Invalid request"
+    }
+)
 @api_view(['GET'])
 def verify_email(request, uidb64, token):
     try:
@@ -155,6 +226,32 @@ def verify_email(request, uidb64, token):
 class GoogleSignIn(APIView):
     permission_classes = [AllowAny]
 
+    @swagger_auto_schema(
+        operation_description="Sign in with Google",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'token': openapi.Schema(type=openapi.TYPE_STRING)
+            }
+        ),
+        responses={
+            200: openapi.Response(
+                description="Google sign in successful",
+                examples={
+                    "application/json": {
+                        'token': 'string',
+                        'user_id': 'integer',
+                        'first_name': 'string',
+                        'last_name': 'string',
+                        'email': 'string',
+                        'avatar_url': 'string'
+                    }
+                }
+            ),
+            400: "Invalid token",
+            400: "Google email not verified"
+        }
+    )
     def post(self, request):
         token = request.data.get('token')
         try:
@@ -171,13 +268,11 @@ class GoogleSignIn(APIView):
                     }
                 )
 
-                # Set avatar_url for both new and existing users
                 user.avatar_url = idinfo.get('picture', '')
                 if created:
                     user.set_unusable_password()
                 user.save()
 
-                # Generate or get existing Token for the user
                 token, _ = Token.objects.get_or_create(user=user)
 
                 return Response({
