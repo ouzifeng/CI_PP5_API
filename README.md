@@ -587,3 +587,9 @@ Serializes detailed dividend information, combining fields from multiple related
   - `model`: `General`
 
 
+# API Documentation
+
+The API documentation for this project is generated using Python's drf-yasg package, which provides interactive and easy-to-understand Swagger documentation for your Django REST Framework (DRF) APIs. Developers can use this documentation to explore and test the available API endpoints directly from the browser. The documentation includes detailed descriptions of each endpoint, including request and response formats, parameters, and authentication methods. To access the Swagger documentation, navigate to https://django-stocks-ecbc6bc5e208.herokuapp.com/swagger/ in your browser. For an alternative view, the ReDoc documentation is available at https://django-stocks-ecbc6bc5e208.herokuapp.com/redoc/. This comprehensive documentation aids in understanding the API's functionality
+
+
+![API Docs](docs/swagger-api.png)
