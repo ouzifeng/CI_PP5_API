@@ -3,7 +3,6 @@ from stockdata.models import (
     General, Description, Highlights, Valuation, Technicals, SplitsDividends,
     AnalystRatings, BalanceSheet, CashFlow, IncomeStatement
 )
-from django.utils.dateparse import parse_date
 import requests
 from datetime import datetime
 from django.utils.timezone import make_aware, now
@@ -11,7 +10,6 @@ from decouple import config
 import os
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
-from django.core.exceptions import ValidationError
 from django.db.utils import DataError
 
 
@@ -28,8 +26,8 @@ def parse_date(date_string):
 
 def import_tickers(api_token, exchange='LSE'):
     ticker_url = (
-        f'https://eodhd.com/api/exchange-symbol-list/{exchange}?api_token='
-        f'{api_token}&fmt=json'
+        f'https://eodhd.com/api/exchange-symbol-list/{exchange}?'
+        f'api_token={api_token}&fmt=json'
     )
     response = requests.get(ticker_url)
 

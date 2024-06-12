@@ -20,8 +20,8 @@ class Command(BaseCommand):
 
         for exchange in exchanges:
             url = (
-                f'https://eodhd.com/api/eod-bulk-last-day/{exchange}?api_token='
-                f'{api_token}&fmt=json'
+                f'https://eodhd.com/api/eod-bulk-last-day/{exchange}?'
+                f'api_token={api_token}&fmt=json'
             )
             response = requests.get(url)
             if response.status_code == 200:

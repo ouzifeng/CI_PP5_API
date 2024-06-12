@@ -4,7 +4,6 @@ from .models import (
     AnalystRatings, Description, IncomeStatement, CAGR, CashFlow,
     BalanceSheet, Note, StockPrices, DividendYieldData, Prices
 )
-from django.contrib.auth.models import User
 
 
 class IncomeStatementSerializer(serializers.ModelSerializer):

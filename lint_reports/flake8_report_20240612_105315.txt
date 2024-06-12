@@ -1,0 +1,1 @@
+C:\Users\David\Desktop\Websites\stocks\backend\djangostocks\stockdata\management\commands\delete_non_dividend_stocks.py:3:1: F401 'stockdata.models.Highlights' imported but unused

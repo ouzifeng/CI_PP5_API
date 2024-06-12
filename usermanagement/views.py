@@ -8,7 +8,7 @@ from drf_yasg import openapi
 from django.core.mail import send_mail
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
-from django.utils.encoding import force_bytes, force_str
+from django.utils.encoding import force_str
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from google.oauth2 import id_token
@@ -27,7 +27,10 @@ class CustomUserCreate(APIView):
     @swagger_auto_schema(
         operation_description="Create a new user",
         request_body=CustomUserSerializer,
-        responses={201: "User created successfully", 400: "Bad request"}
+        responses={
+            201: openapi.Response(description="User created successfully"),
+            400: openapi.Response(description="Bad request")
+        }
     )
     def post(self, request):
         reg_serializer = CustomUserSerializer(data=request.data)
@@ -52,7 +55,10 @@ class CustomUserCreate(APIView):
             'message': openapi.Schema(type=openapi.TYPE_STRING)
         }
     ),
-    responses={200: "Email sent successfully", 500: "Internal server error"}
+    responses={
+        200: openapi.Response(description="Email sent successfully"),
+        500: openapi.Response(description="Internal server error")
+    }
 )
 @api_view(['POST'])
 def send_contact_email(request):
@@ -89,9 +95,8 @@ def send_contact_email(request):
         }
     ),
     responses={
-        200: "Password reset email sent",
-        400: "User with this email does not exist",
-        400: "Email is not provided"
+        200: openapi.Response(description="Password reset email sent"),
+        400: openapi.Response(description="Bad request")
     }
 )
 @api_view(['POST'])
@@ -130,10 +135,8 @@ def custom_password_reset_request(request):
         }
     ),
     responses={
-        200: "Password has been reset successfully",
-        400: "Invalid token",
-        400: "Passwords do not match",
-        400: "Invalid UID"
+        200: openapi.Response(description="Password has been reset"),
+        400: openapi.Response(description="Invalid request")
     }
 )
 @api_view(['POST'])
@@ -192,9 +195,8 @@ def password_reset_confirm(request):
         )
     ],
     responses={
-        200: "Email verified successfully",
-        400: "Verification link is invalid",
-        400: "Invalid request"
+        200: openapi.Response(description="Email verified successfully"),
+        400: openapi.Response(description="Invalid request")
     }
 )
 @api_view(['GET'])
@@ -248,8 +250,8 @@ class GoogleSignIn(APIView):
                     }
                 }
             ),
-            400: "Invalid token",
-            400: "Google email not verified"
+            400: openapi.Response(description="Invalid token"),
+            '400_email': openapi.Response(description="Gmail not verified")
         }
     )
     def post(self, request):
@@ -286,7 +288,10 @@ class GoogleSignIn(APIView):
             else:
                 return Response(
                     {"error": "Google email not verified"},
-                    status=400
+                    status=status.HTTP_400_BAD_REQUEST
                 )
         except ValueError:
-            return Response({"error": "Invalid token"}, status=400)
+            return Response(
+                {"error": "Invalid token"},
+                status=status.HTTP_400_BAD_REQUEST
+            )

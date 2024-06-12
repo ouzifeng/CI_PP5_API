@@ -593,3 +593,35 @@ The API documentation for this project is generated using Python's drf-yasg pack
 
 
 ![API Docs](docs/swagger-api.png)
+
+
+## Technologies Used
+
+### Languages and Frameworks
+
+* Python
+* Django
+* Django REST Framework (DRF)
+
+### Libraries and Tools
+
+- **dj-rest-auth**: Authentication library for Django REST Framework.
+- **Django**: High-level Python web framework.
+- **django-allauth**: Integrated set of Django applications addressing authentication, registration, account management as well as 3rd party (social) account authentication.
+- **django-cors-headers**: Django app for handling the server headers required for Cross-Origin Resource Sharing (CORS).
+- **djangorestframework**: Powerful and flexible toolkit for building Web APIs.
+- **djangorestframework-simplejwt**: JSON Web Token authentication for Django REST Framework.
+- **drf-yasg**: Automated generation of real Swagger/OpenAPI 2.0 specifications from Django Rest Framework code.
+- **eodhd**: End of Day Historical Data API.
+- **fonttools**: Library to manipulate font files.
+- **google-auth**: Google Authentication Library.
+- **gunicorn**: Python WSGI HTTP Server for UNIX.
+- **markdown-it-py**: Markdown parser for Python.
+- **mdurl**: URL utilities for markdown-it.
+- **numpy**: The fundamental package for array computing with Python.
+- **oauthlib**: A generic, spec-compliant, thorough implementation of the OAuth request-signing logic.
+- **pandas**: Powerful data structures for data analysis, time series, and statistics.
+- **pillow**: Python Imaging Library (PIL).
+- **psycopg2**: PostgreSQL adapter for Python.
+- **requests-oauthlib**: OAuthlib integration for Requests.
+
