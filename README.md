@@ -1,4 +1,4 @@
-![Bull Street](static/media/sell-your-tackle-logo.png)
+![Bull Street](docs/bull-street-logo.png)
 
 # Bull Street
 
