@@ -613,7 +613,9 @@ The API documentation for this project is generated using Python's drf-yasg pack
 - **djangorestframework-simplejwt**: JSON Web Token authentication for Django REST Framework.
 - **drf-yasg**: Automated generation of real Swagger/OpenAPI 2.0 specifications from Django Rest Framework code.
 - **eodhd**: End of Day Historical Data API.
+- **flake8**: A Python linting tool
 - **fonttools**: Library to manipulate font files.
+- **gitignore_parser**: Ignores files in the .gitignore file when testing for pep8 compliance
 - **google-auth**: Google Authentication Library.
 - **gunicorn**: Python WSGI HTTP Server for UNIX.
 - **markdown-it-py**: Markdown parser for Python.
@@ -624,4 +626,24 @@ The API documentation for this project is generated using Python's drf-yasg pack
 - **pillow**: Python Imaging Library (PIL).
 - **psycopg2**: PostgreSQL adapter for Python.
 - **requests-oauthlib**: OAuthlib integration for Requests.
+
+# Validation
+
+To comply with PEP8 standards all .py files where run through the Code Institutes PEP8 linter. Once all files had passed, flake8, a Pep8 compliance tool built for Python was installed and run to generate a lint report file. The results and be found in the lint_reports folder as a txt file. The only error it found was:
+
+stockdata\management\commands\delete_non_dividend_stocks.py:3:1: F401 'stockdata.models.Highlights' imported but unused
+
+However this is a false negative and the highlights model is used in the function:
+
+    def handle(self, *args, **kwargs):
+        stocks_to_delete = General.objects.filter(
+            Q(highlights__dividend_yield__isnull=True) |
+            Q(highlights__dividend_yield=0.00)
+        )
+
+
+To run futher validation, the file "lint_and_capture.py" can be run by running the command python lint_and_capture.py, or by setting up a cronjob on the server. A new report will be generated every time this is run
+
+
+
 
