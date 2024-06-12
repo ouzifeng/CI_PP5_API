@@ -14,9 +14,18 @@ To this end, the platform needs to focus on 3 areas:
 
 The project is split into a react based frontend which can be found [here](https://www.sellyourtackle.co.uk/). This depository is dedicated to the backend, which has been built using Django's Rest Framework
 
-## Project Scope
 
-The scope of this project is to build a robust backend that can serve structured company financial data over an API
+## Features
+
+The below feature list was submitted by the client:
+
+* User auth api endpoints to allow users to sign up and log in via email
+* Google auth integration to allow users to sign up and log in via Google
+* Integration of EOD data API to import company data
+* Various methods to remove companies which do not meet the clients investment criteria
+* Company filter end points which allow users to filter companies in and out based on certain criteria
+* Search endpoint to find companies int he database by search via name or ticker
+* Note taking endpoint which will allow users to create, edit or delete investment research notes
 
 
 ### Site Owner and User Goals
@@ -93,3 +102,478 @@ This management command works out the 5 year CAGR for important income statement
 
 Company fundamental data does not change on a daily basis, but stock prices do. The fundamental data api has a strict daily limit of 10k companies, however the stock prices API allows a whole exchanges stock prices to be downloaded for just 1,000 requests. The stock_prices command imports all sotck prices across all exchanges, and can be setup to run as a cronjob daily
 
+## Design Process
+
+The design process was based on user stories derived from the frontend build, these can be found [here](hesererer):
+
+
+## User Stories
+
+For the API side of the project I created a separate set of user stories, written from the perspective of a developer consuming the API. The API User Stories can be found here: Sonic Explorers API User Stories
+
+# Structure
+
+
+## Code Structure
+
+The application is built using the Django Rest framework, and is broken up into 3 main apps to help with future maintaince, code transparency and further feature building
+
+stockdata app - this houses all the stock related data such as importing and filtering out the stocks, as well as providing the backend api endpoints
+usermanagement app - this houses all the authentication functionality, including login, logout, registration, password reset and allauth for SSO
+config app - the houses the main app setting and master URL file
+
+
+Within these apps you will find a models.py file, which contains all the models used in the app,a views.py file which contains all the views used in the app, and a urls.py file which contains all the URLs used in the app. Where necessary there is also a serializers.py file which converts the as Django model instances into api endpoints
+
+Within the tackle and auth_app you will also find the relevant templates for each related page.
+
+Within the apps you will find::
+
+media/logo folder - this holds the company logos
+stockdata/management/commands folder - this is where the management commands are hosted
+Procfile - hosts the gunicorn setting for Heroku
+manage.py - manages the database and the app
+requirements.txt - list of thrid party libraries required to be installed when deployed
+
+
+
+## Environment Variables
+
+Enviroment variables are stored in a.env file, which is not tracked by git. This file contains all the sensitive information for the app, such as the database credentials. Once the app is deployed, the.env file is not tracked, and this sensitive information is stored in the Heroku environment variables.
+
+## Database
+
+The database used is a postgresql db hosted at neon.tech.
+
+
+# Models Documentation
+
+The following models were created to represent the database structure for the Stock Management and User system within the application:
+
+## General Model
+
+Represents the general information of a stock.
+
+- **Fields**:
+  - `code`: Stores the stock's code.
+  - `type`: Stores the type of the stock.
+  - `name`: Stores the stock's name.
+  - `exchange`: Stores the exchange where the stock is listed.
+  - `currency_code`: Stores the currency code.
+  - `currency_name`: Stores the name of the currency.
+  - `currency_symbol`: Stores the symbol of the currency.
+  - `country_name`: Stores the name of the country.
+  - `country_iso`: Stores the ISO code of the country.
+  - `isin`: Stores the ISIN of the stock.
+  - `uid`: Stores a unique identifier for the stock.
+  - `primary_ticker`: Stores the primary ticker of the stock.
+  - `fiscal_year_end`: Stores the fiscal year end date.
+  - `sector`: Stores the sector of the stock.
+  - `industry`: Stores the industry of the stock.
+  - `address`: Stores the address of the stock's company.
+  - `phone`: Stores the phone number of the stock's company.
+  - `web_url`: Stores the URL of the stock's company's website.
+  - `full_time_employees`: Stores the number of full-time employees.
+  - `logo`: Stores the logo image of the stock's company.
+  - `updated_at`: Records when the stock information was last updated.
+- **Relationships**:
+  - `followers`: Links to the User model, representing users who follow this stock.
+
+## Description Model
+
+Represents a detailed description of a stock.
+
+- **Fields**:
+  - `text`: Stores the description text.
+- **Relationships**:
+  - `general`: Links to the General model.
+
+## Highlights Model
+
+Represents the financial highlights of a stock.
+
+- **Fields**:
+  - `market_capitalization`: Stores the market capitalization.
+  - `ebitda`: Stores the EBITDA.
+  - `pe_ratio`: Stores the PE ratio.
+  - `peg_ratio`: Stores the PEG ratio.
+  - `wall_street_target_price`: Stores the Wall Street target price.
+  - `book_value`: Stores the book value.
+  - `dividend_share`: Stores the dividend per share.
+  - `dividend_yield`: Stores the dividend yield.
+  - `earnings_share`: Stores the earnings per share.
+  - `eps_estimate_current_year`: Stores the EPS estimate for the current year.
+  - `eps_estimate_next_year`: Stores the EPS estimate for the next year.
+  - `eps_estimate_next_quarter`: Stores the EPS estimate for the next quarter.
+  - `eps_estimate_current_quarter`: Stores the EPS estimate for the current quarter.
+  - `most_recent_quarter`: Stores the date of the most recent quarter.
+  - `profit_margin`: Stores the profit margin.
+  - `operating_margin_ttm`: Stores the operating margin TTM.
+  - `return_on_assets_ttm`: Stores the return on assets TTM.
+  - `return_on_equity_ttm`: Stores the return on equity TTM.
+  - `revenue_ttm`: Stores the revenue TTM.
+  - `revenue_per_share_ttm`: Stores the revenue per share TTM.
+  - `quarterly_revenue_growth_yoy`: Stores the quarterly revenue growth YoY.
+  - `gross_profit_ttm`: Stores the gross profit TTM.
+  - `diluted_eps_ttm`: Stores the diluted EPS TTM.
+  - `quarterly_earnings_growth_yoy`: Stores the quarterly earnings growth YoY.
+- **Relationships**:
+  - `general`: Links to the General model.
+
+## Valuation Model
+
+Represents the valuation metrics of a stock.
+
+- **Fields**:
+  - `trailing_pe`: Stores the trailing PE ratio.
+  - `forward_pe`: Stores the forward PE ratio.
+  - `price_sales_ttm`: Stores the price to sales TTM ratio.
+  - `price_book_mrq`: Stores the price to book MRQ ratio.
+  - `enterprise_value`: Stores the enterprise value.
+  - `enterprise_value_revenue`: Stores the enterprise value to revenue ratio.
+  - `enterprise_value_ebitda`: Stores the enterprise value to EBITDA ratio.
+- **Relationships**:
+  - `general`: Links to the General model.
+
+## Technicals Model
+
+Represents the technical indicators of a stock.
+
+- **Fields**:
+  - `beta`: Stores the beta value.
+  - `fifty_two_week_high`: Stores the 52-week high price.
+  - `fifty_two_week_low`: Stores the 52-week low price.
+  - `fifty_day_ma`: Stores the 50-day moving average.
+  - `two_hundred_day_ma`: Stores the 200-day moving average.
+  - `shares_short`: Stores the number of shares short.
+  - `shares_short_prior_month`: Stores the number of shares short in the prior month.
+  - `short_ratio`: Stores the short ratio.
+  - `short_percent`: Stores the short percentage.
+- **Relationships**:
+  - `general`: Links to the General model.
+
+## SplitsDividends Model
+
+Represents the splits and dividends information of a stock.
+
+- **Fields**:
+  - `forward_annual_dividend_rate`: Stores the forward annual dividend rate.
+  - `forward_annual_dividend_yield`: Stores the forward annual dividend yield.
+  - `payout_ratio`: Stores the payout ratio.
+  - `dividend_date`: Stores the dividend date.
+  - `ex_dividend_date`: Stores the ex-dividend date.
+  - `last_split_factor`: Stores the last split factor.
+  - `last_split_date`: Stores the last split date.
+- **Relationships**:
+  - `general`: Links to the General model.
+
+## AnalystRatings Model
+
+Represents analyst ratings for a stock.
+
+- **Fields**:
+  - `rating`: Stores the analyst rating.
+  - `target_price`: Stores the target price.
+  - `strong_buy`: Stores the number of strong buy recommendations.
+  - `buy`: Stores the number of buy recommendations.
+  - `hold`: Stores the number of hold recommendations.
+  - `sell`: Stores the number of sell recommendations.
+  - `strong_sell`: Stores the number of strong sell recommendations.
+- **Relationships**:
+  - `general`: Links to the General model.
+
+## BalanceSheet Model
+
+Represents the balance sheet of a stock.
+
+- **Fields**:
+  - `date`: Stores the date of the balance sheet.
+  - `common_stock_shares_outstanding`: Stores the common stock shares outstanding.
+  - `type`: Specifies the type of balance sheet (Yearly, Quarterly).
+- **Relationships**:
+  - `general`: Links to the General model.
+
+## CashFlow Model
+
+Represents the cash flow statement of a stock.
+
+- **Fields**:
+  - `date`: Stores the date of the cash flow statement.
+  - `dividends_paid`: Stores the dividends paid.
+  - `type`: Specifies the type of cash flow statement (Yearly, Quarterly).
+- **Relationships**:
+  - `general`: Links to the General model.
+
+## IncomeStatement Model
+
+Represents the income statement of a stock.
+
+- **Fields**:
+  - `date`: Stores the date of the income statement.
+  - `total_revenue`: Stores the total revenue.
+  - `gross_profit`: Stores the gross profit.
+  - `net_income`: Stores the net income.
+  - `type`: Specifies the type of income statement (Yearly, Quarterly).
+- **Relationships**:
+  - `general`: Links to the General model.
+
+## CAGR Model
+
+Represents the Compound Annual Growth Rate (CAGR) of a stock.
+
+- **Fields**:
+  - `total_revenue_cagr`: Stores the total revenue CAGR.
+  - `gross_profit_cagr`: Stores the gross profit CAGR.
+  - `net_income_cagr`: Stores the net income CAGR.
+- **Relationships**:
+  - `general`: Links to the General model.
+
+## Note Model
+
+Represents notes made by users on stocks.
+
+- **Fields**:
+  - `content`: Stores the content of the note.
+  - `created_at`: Records when the note was created.
+  - `updated_at`: Records when the note was last updated.
+- **Relationships**:
+  - `user`: Links to the User model.
+  - `stock`: Links to the General model.
+
+## StockPrices Model
+
+Represents the stock prices over the years.
+
+- **Fields**:
+  - `Y1`: Stores the stock price for year 1.
+  - `Y2`: Stores the stock price for year 2.
+  - `Y3`: Stores the stock price for year 3.
+  - `Y4`: Stores the stock price for year 4.
+  - `Y5`: Stores the stock price for year 5.
+  - `Y6`: Stores the stock price for year 6.
+  - `cagr_5_years`: Stores the 5-year CAGR of the stock price.
+- **Relationships**:
+  - `general`: Links to the General model.
+- **Meta**:
+  - `verbose_name_plural`: "Stock Prices"
+
+## DividendYieldData Model
+
+Represents the dividend yield data over the years.
+
+- **Fields**:
+  - `yield_Y1`: Stores the dividend yield for year 1.
+  - `yield_Y2`: Stores the dividend yield for year 2.
+  - `yield_Y3`: Stores the dividend yield for year 3.
+  - `yield_Y4`: Stores the dividend yield for year 4.
+  - `yield_Y5`: Stores the dividend yield for year 5.
+  - `cagr_5_years`: Stores the 5-year CAGR of the dividend yield.
+- **Relationships**:
+  - `general`: Links to the General model.
+- **Meta**:
+  - `verbose_name_plural`: "Dividend Yield Data"
+
+## Prices Model
+
+Represents the current and previous closing prices of a stock.
+
+- **Fields**:
+  - `close`: Stores the current closing price.
+  - `prev_close`: Stores the previous closing price.
+  - `change`: Stores the change in price.
+  - `change_p`: Stores the percentage change in price.
+- **Relationships**:
+  - `general`: Links to the General model.
+- **Meta**:
+  - `verbose_name_plural`: "Stock Prices"
+
+## CustomUser Model
+
+Represents users within the application with custom fields and behavior.
+
+- **Fields**:
+  - `email`: Stores the user's email and is used as the unique identifier for login.
+  - `email_verified`: Indicates whether the user's email has been verified.
+  - `avatar_url`: Stores the URL of the user's avatar image.
+- **Methods**:
+  - `__str__()`: Returns the user's email.
+- **Manager**:
+  - `CustomUserManager`: Handles user creation and management.
+
+## CustomUserManager
+
+Manages the creation and management of CustomUser instances.
+
+- **Methods**:
+  - `create_user(email, password, **extra_fields)`: Creates a new user with the given email and password.
+  - `create_superuser(email, password, **extra_fields)`: Creates a new superuser with the given email and password.
+
+  # Serializers Documentation
+
+The following serializers were created to represent the serialization structure for the Stock Management system within the application:
+
+## IncomeStatementSerializer
+
+Serializes the `IncomeStatement` model.
+
+- **Meta**:
+  - `model`: `IncomeStatement`
+  - `fields`: `__all__`
+
+## HighlightSerializer
+
+Serializes the `Highlights` model.
+
+- **Meta**:
+  - `model`: `Highlights`
+  - `fields`: `__all__`
+
+## ValuationSerializer
+
+Serializes the `Valuation` model.
+
+- **Meta**:
+  - `model`: `Valuation`
+  - `fields`: `__all__`
+
+## TechnicalsSerializer
+
+Serializes the `Technicals` model.
+
+- **Meta**:
+  - `model`: `Technicals`
+  - `fields`: `__all__`
+
+## SplitsDividendsSerializer
+
+Serializes the `SplitsDividends` model.
+
+- **Meta**:
+  - `model`: `SplitsDividends`
+  - `fields`: `__all__`
+
+## AnalystRatingsSerializer
+
+Serializes the `AnalystRatings` model.
+
+- **Meta**:
+  - `model`: `AnalystRatings`
+  - `fields`: `__all__`
+
+## DescriptionSerializer
+
+Serializes the `Description` model.
+
+- **Meta**:
+  - `model`: `Description`
+  - `fields`: `__all__`
+
+## CagrSerializer
+
+Serializes the `CAGR` model.
+
+- **Meta**:
+  - `model`: `CAGR`
+  - `fields`: `__all__`
+
+## BalanceSheetSerializer
+
+Serializes the `BalanceSheet` model.
+
+- **Meta**:
+  - `model`: `BalanceSheet`
+  - `fields`: `__all__`
+
+## CashFlowSerializer
+
+Serializes the `CashFlow` model.
+
+- **Meta**:
+  - `model`: `CashFlow`
+  - `fields`: `__all__`
+
+## StockPricesSerializer
+
+Serializes the `StockPrices` model.
+
+- **Meta**:
+  - `model`: `StockPrices`
+  - `fields`: `__all__`
+
+## PricesSerializer
+
+Serializes the `Prices` model.
+
+- **Meta**:
+  - `model`: `Prices`
+  - `fields`: `__all__`
+
+## DividendYieldDataSerializer
+
+Serializes the `DividendYieldData` model.
+
+- **Meta**:
+  - `model`: `DividendYieldData`
+  - `fields`: `__all__`
+
+## GeneralSerializer
+
+Serializes the `General` model and includes nested serializers for related models.
+
+- **Fields**:
+  - `highlights`: Uses `HighlightSerializer` (read-only).
+  - `valuation`: Uses `ValuationSerializer` (read-only).
+  - `technicals`: Uses `TechnicalsSerializer` (read-only).
+  - `splits_dividends`: Uses `SplitsDividendsSerializer` (read-only).
+  - `analyst_ratings`: Uses `AnalystRatingsSerializer` (read-only).
+  - `general_description`: Uses `DescriptionSerializer` (read-only).
+  - `general_cagr`: Uses `CagrSerializer` (read-only).
+  - `income_statements`: Uses `IncomeStatementSerializer` (many=True, read-only).
+  - `balance_sheets`: Uses `BalanceSheetSerializer` (many=True, read-only).
+  - `cash_flows`: Uses `CashFlowSerializer` (many=True, read-only).
+  - `stock_prices`: Uses `StockPricesSerializer` (many=True, read-only).
+  - `dividend_yield_data`: Uses `DividendYieldDataSerializer` (read-only).
+  - `prices`: Uses `PricesSerializer` (read-only).
+- **Meta**:
+  - `model`: `General`
+  - `fields`: `__all__`
+
+## NoteSerializer
+
+Serializes the `Note` model.
+
+- **Fields**:
+  - `user`: Uses `PrimaryKeyRelatedField` (read-only).
+- **Meta**:
+  - `model`: `Note`
+  - `fields`: `['id', 'user', 'stock', 'content', 'created_at', 'updated_at']`
+
+## StockSearchSerializer
+
+Serializes a subset of the `General` model fields for search functionality.
+
+- **Meta**:
+  - `model`: `General`
+  - `fields`: `('uid', 'code', 'name', 'primary_ticker', 'country_iso')`
+
+## DividendSerializer
+
+Serializes detailed dividend information, combining fields from multiple related models.
+
+- **Fields**:
+  - `uid`
+  - `name`
+  - `primary_ticker`
+  - `country_iso`
+  - `industry`
+  - `exchange`
+  - `currency_symbol`
+  - `market_capitalization`: From `highlights`.
+  - `pe_ratio`: From `highlights`.
+  - `dividend_yield`: From `highlights`.
+  - `forward_annual_dividend_yield`: From `splits_dividends`.
+  - `payout_ratio`: From `splits_dividends`.
+  - `dividend_date`: From `splits_dividends`.
+  - `cagr_5_years`: From `dividend_yield_data`.
+- **Meta**:
+  - `model`: `General`
