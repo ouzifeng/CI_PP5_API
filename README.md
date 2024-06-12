@@ -408,7 +408,15 @@ Manages the creation and management of CustomUser instances.
   - `create_user(email, password, **extra_fields)`: Creates a new user with the given email and password.
   - `create_superuser(email, password, **extra_fields)`: Creates a new superuser with the given email and password.
 
-  # Serializers Documentation
+
+These models are visually represented by the ERD below:
+
+Note: The ERD modeling tool only allows up to 10 models to be displayed at a time.
+
+![ERD](docs/models-relationship.png)
+
+
+# Serializers Documentation
 
 The following serializers were created to represent the serialization structure for the Stock Management system within the application:
 
@@ -577,3 +585,5 @@ Serializes detailed dividend information, combining fields from multiple related
   - `cagr_5_years`: From `dividend_yield_data`.
 - **Meta**:
   - `model`: `General`
+
+
