@@ -587,7 +587,7 @@ Serializes detailed dividend information, combining fields from multiple related
   - `model`: `General`
 
 
-# API Documentation
+## API Documentation
 
 The API documentation for this project is generated using Python's drf-yasg package, which provides interactive and easy-to-understand Swagger documentation for your Django REST Framework (DRF) APIs. Developers can use this documentation to explore and test the available API endpoints directly from the browser. The documentation includes detailed descriptions of each endpoint, including request and response formats, parameters, and authentication methods. To access the Swagger documentation, navigate to https://django-stocks-ecbc6bc5e208.herokuapp.com/swagger/ in your browser. For an alternative view, the ReDoc documentation is available at https://django-stocks-ecbc6bc5e208.herokuapp.com/redoc/. This comprehensive documentation aids in understanding the API's functionality
 
@@ -627,7 +627,7 @@ The API documentation for this project is generated using Python's drf-yasg pack
 - **psycopg2**: PostgreSQL adapter for Python.
 - **requests-oauthlib**: OAuthlib integration for Requests.
 
-# Validation
+## Validation
 
 To comply with PEP8 standards all .py files where run through the Code Institutes PEP8 linter. Once all files had passed, flake8, a Pep8 compliance tool built for Python was installed and run to generate a lint report file. The results and be found in the lint_reports folder as a txt file. The only error it found was:
 
@@ -646,4 +646,38 @@ To run futher validation, the file "lint_and_capture.py" can be run by running t
 
 
 
+## Testing
+
+### Automated Unit Testing
+
+* Testing using Django unittest
+* The test file can be found in the `usermanagement` app
+* To run, call `python manage.py test` in the terminal
+
+#### View Tests
+- **StockDataTests**
+  - **test_stock_detail_view**
+    - Tests the stock detail view for correct HTTP response and data retrieval.
+  - **test_toggle_follow_stock**
+    - Tests the toggle follow stock functionality for correct HTTP response.
+  - **test_note_list_create_view**
+    - Tests the note list and create view for correct HTTP response when listing notes.
+    - Tests the note creation functionality for correct HTTP response and data creation.
+  - **test_note_detail_view**
+    - Tests the note detail view for correct HTTP response when retrieving a note.
+    - Tests updating a note for correct HTTP response and data update.
+    - Tests deleting a note for correct HTTP response and data deletion.
+  - **test_followed_stocks_view**
+    - Tests the followed stocks view for correct HTTP response and data retrieval.
+  - **test_stock_search_view**
+    - Tests the stock search view for correct HTTP response and search functionality.
+  - **test_dividend_data_list_view**
+    - Tests the dividend data list view for correct HTTP response and data retrieval.
+
+<details>
+<summary>Unit Test Results</summary>
+<img src="docs/testing/unittests.png" alt="unit testing">
+</details>
+
+All tests pass with "OK" status.
 
