@@ -681,3 +681,15 @@ To run futher validation, the file "lint_and_capture.py" can be run by running t
 
 All tests pass with "OK" status.
 
+## Security
+
+The following security measures are in place:
+
+- **Environment Variables**: All sensitive information, such as passwords and security keys, are stored as environment variables. This helps keep secrets out of the codebase.
+- **Password Hashing**: User passwords are stored as hashed values in the database using Django's built-in password hashing mechanisms. This prevents password leaks in case of a database breach.
+- **User Authentication**: Access to certain endpoints and pages is restricted to authenticated users, ensuring that only authorized users can perform certain actions.
+- **Role-Based Access Control**: Different sections of the application are accessible based on user roles, ensuring that users can only access features and data pertinent to their permissions.
+- **Django Admin Protection**: The Django admin interface is accessible only to superusers, adding an additional layer of security to administrative functions.
+- **HTTPS**: All data transmitted between clients and the server is encrypted using HTTPS, protecting data in transit from eavesdropping and man-in-the-middle attacks.
+- **Security Headers**: HTTP security headers such as Content Security Policy (CSP), X-Content-Type-Options, and X-Frame-Options are used to protect against common web vulnerabilities.
+- **Regular Security Audits**: Regular security audits and code reviews are conducted to identify and mitigate potential security risks.
