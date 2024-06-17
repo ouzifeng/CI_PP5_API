@@ -44,7 +44,7 @@ def send_verification_email(user, request):
     token = default_token_generator.make_token(user)
     uid = urlsafe_base64_encode(force_bytes(user.pk))
     verification_url = (
-        f"{settings.FRONTEND_BASE_URL}verify-email/{uid}/{token}"
+        f"{settings.FRONTEND_BASE_URL}api/user/verify-email/{uid}/{token}"
     )
 
     subject = 'Verify your email'

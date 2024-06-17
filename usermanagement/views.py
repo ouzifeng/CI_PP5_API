@@ -74,6 +74,7 @@ class CustomUserCreate(APIView):
     def post(self, request):
         reg_serializer = CustomUserSerializer(data=request.data)
         if reg_serializer.is_valid():
+            reg_serializer.validated_data['username'] = reg_serializer.validated_data['email']
             new_user = reg_serializer.save(is_active=False)
             if new_user:
                 send_verification_email(new_user, request)
@@ -81,7 +82,6 @@ class CustomUserCreate(APIView):
         return Response(
             reg_serializer.errors, status=status.HTTP_400_BAD_REQUEST
         )
-
 
 @swagger_auto_schema(
     method='post',
