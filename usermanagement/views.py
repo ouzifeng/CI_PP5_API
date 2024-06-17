@@ -20,6 +20,37 @@ from .models import CustomUser
 
 User = get_user_model()
 
+class LoginView(APIView):
+    permission_classes = [AllowAny]
+
+    @swagger_auto_schema(
+        operation_description="User login",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'email': openapi.Schema(type=openapi.TYPE_STRING),
+                'password': openapi.Schema(type=openapi.TYPE_STRING),
+            }
+        ),
+        responses={
+            200: openapi.Response(description="Login successful"),
+            400: openapi.Response(description="Invalid credentials"),
+        }
+    )
+    def post(self, request):
+        email = request.data.get('email')
+        password = request.data.get('password')
+
+        user = authenticate(request, username=email, password=password)
+        if user is not None:
+            login(request, user)
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({'token': token.key}, status=status.HTTP_200_OK)
+        else:
+            return Response(
+                {'non_field_errors': ['Unable to log in with provided credentials.']},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 class CustomUserCreate(APIView):
     permission_classes = [AllowAny]
