@@ -9,6 +9,7 @@ class CustomUserManager(BaseUserManager):
         if not email:
             raise ValueError('The Email field must be set')
         email = self.normalize_email(email)
+        extra_fields['username'] = email  # Set username as email
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
@@ -27,7 +28,7 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomUser(AbstractUser):
-    username = None
+    username = models.CharField(max_length=150, unique=True, null=True)
     email = models.EmailField(_('email address'), unique=True)
     email_verified = models.BooleanField(default=False)
     avatar_url = models.URLField(max_length=500, blank=True, null=True)

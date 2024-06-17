@@ -41,15 +41,20 @@ class LoginView(APIView):
         email = request.data.get('email')
         password = request.data.get('password')
 
-        print(f"Received email: {email}, password: {password}")  # Log the received data
+        # Map email to username for authentication
+        username = email
 
-        user = authenticate(request, username=email, password=password)
+        print(f"Attempting to authenticate user with email: {email}")
+
+        user = authenticate(request, username=username, password=password)
+
         if user is not None:
+            print(f"Authenticated user: {user.email}")
             login(request, user)
             token, created = Token.objects.get_or_create(user=user)
             return Response({'token': token.key}, status=status.HTTP_200_OK)
         else:
-            print("Authentication failed")  # Log authentication failure
+            print("Authentication failed")
             return Response(
                 {'non_field_errors': ['Unable to log in with provided credentials.']},
                 status=status.HTTP_400_BAD_REQUEST

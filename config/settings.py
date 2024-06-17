@@ -56,6 +56,7 @@ INSTALLED_APPS = [
 
 # Authentication Backends
 AUTHENTICATION_CLASSES = (
+    'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
     'dj_rest_auth.authentication.AllAuthJWTAuthentication',    
 )
@@ -184,3 +185,5 @@ EMAIL_PORT = 2525
 
 FRONTEND_BASE_URL = 'https://stocks-frontend-d56c65a3a165.herokuapp.com/'
 GOOGLE_CLIENT_ID = '937907568797-kn78ea93kbq4puisnsqpagdtua1jtnvc.apps.googleusercontent.com'
+
+
