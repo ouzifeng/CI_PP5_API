@@ -595,6 +595,161 @@ The API documentation for this project is generated using Python's drf-yasg pack
 ![API Docs](docs/swagger-api.png)
 
 
+## API Endpoints
+
+This backend application exposes various API endpoints to manage user authentication, stock data, and note-taking features. Below is a detailed list of available endpoints and their functionalities:
+
+### Authentication Endpoints
+
+#### User Registration
+- **Endpoint:** `/register/`
+- **Method:** `POST`
+- **Description:** Creates a new user account.
+- **Request Body:**
+  - `email`: The user's email address.
+  - `password`: The user's password.
+- **Response:**
+  - **201 Created:** User account successfully created.
+  - **400 Bad Request:** Invalid input data.
+
+#### User Login
+- **Endpoint:** `/auth/login/`
+- **Method:** `POST`
+- **Description:** Authenticates a user and returns a token.
+- **Request Body:**
+  - `email`: The user's email address.
+  - `password`: The user's password.
+- **Response:**
+  - **200 OK:** Authentication successful.
+  - **400 Bad Request:** Invalid credentials.
+
+#### Google Sign-In
+- **Endpoint:** `/google/login/`
+- **Method:** `POST`
+- **Description:** Authenticates a user via Google OAuth and returns a token.
+- **Request Body:**
+  - `token`: Google OAuth token.
+- **Response:**
+  - **200 OK:** Authentication successful.
+  - **400 Bad Request:** Invalid token or email not verified.
+
+### Password Management Endpoints
+
+#### Password Reset Request
+- **Endpoint:** `/custom-password-reset/`
+- **Method:** `POST`
+- **Description:** Sends a password reset email to the user.
+- **Request Body:**
+  - `email`: The user's email address.
+- **Response:**
+  - **200 OK:** Password reset email sent.
+  - **400 Bad Request:** User with this email does not exist.
+
+#### Password Reset Confirm
+- **Endpoint:** `/custom/auth/password/reset/confirm/`
+- **Method:** `POST`
+- **Description:** Resets the user's password.
+- **Request Body:**
+  - `uid`: The user's ID.
+  - `token`: The reset token.
+  - `new_password1`: The new password.
+  - `new_password2`: Confirmation of the new password.
+- **Response:**
+  - **200 OK:** Password has been reset successfully.
+  - **400 Bad Request:** Invalid token.
+  - **400 Bad Request:** Passwords do not match.
+  - **400 Bad Request:** Invalid UID.
+
+### Email Verification Endpoint
+
+#### Verify Email
+- **Endpoint:** `/verify-email/<uidb64>/<token>/`
+- **Method:** `GET`
+- **Description:** Verifies a user's email address.
+- **Response:**
+  - **200 OK:** Email verified successfully.
+  - **400 Bad Request:** Verification link is invalid.
+  - **400 Bad Request:** Invalid request.
+
+### Contact Endpoint
+
+#### Send Contact Email
+- **Endpoint:** `/send-email/`
+- **Method:** `POST`
+- **Description:** Sends a contact email.
+- **Request Body:**
+  - `name`: The name of the person sending the email.
+  - `email`: The email address of the person sending the email.
+  - `message`: The content of the email.
+- **Response:**
+  - **200 OK:** Email sent successfully.
+  - **500 Internal Server Error:** Failed to send email.
+
+### Stock Management Endpoints
+
+#### Stock Detail
+- **Endpoint:** `/stocks/<uid>/`
+- **Method:** `GET`
+- **Description:** Retrieve details of a stock.
+- **Response:**
+  - **200 OK:** Returns stock details.
+
+#### Toggle Follow Stock
+- **Endpoint:** `/stocks/<uid>/follow/`
+- **Method:** `POST`
+- **Description:** Toggle follow/unfollow a stock.
+- **Response:**
+  - **200 OK:** Successfully followed/unfollowed the stock.
+  - **404 Not Found:** Stock not found.
+
+### Note Management Endpoints
+
+#### List and Create Notes
+- **Endpoint:** `/notes/`
+- **Method:** `GET`, `POST`
+- **Description:** List all notes or create a new note.
+- **Response:**
+  - **200 OK:** Returns a list of notes.
+  - **201 Created:** Note successfully created.
+
+#### Note Detail
+- **Endpoint:** `/notes/<id>/`
+- **Method:** `GET`, `PUT`, `DELETE`
+- **Description:** Retrieve, update, or delete a note.
+- **Response:**
+  - **200 OK:** Returns note details.
+  - **200 OK:** Note successfully updated.
+  - **204 No Content:** Note successfully deleted.
+
+### Followed Stocks Endpoint
+
+#### Followed Stocks
+- **Endpoint:** `/followed-stocks/`
+- **Method:** `GET`
+- **Description:** List all stocks followed by the user.
+- **Response:**
+  - **200 OK:** Returns a list of followed stocks.
+
+### Stock Search Endpoint
+
+#### Search Stocks
+- **Endpoint:** `/stocks/search/`
+- **Method:** `GET`
+- **Description:** Search stocks by code or name.
+- **Response:**
+  - **200 OK:** Returns search results.
+
+### Dividend Data Endpoint
+
+#### Dividend Data
+- **Endpoint:** `/dividend-data/`
+- **Method:** `GET`
+- **Description:** List dividend data with filters.
+- **Response:**
+  - **200 OK:** Returns filtered dividend data.
+
+
+
 ## Technologies Used
 
 ### Languages and Frameworks
@@ -693,3 +848,103 @@ The following security measures are in place:
 - **HTTPS**: All data transmitted between clients and the server is encrypted using HTTPS, protecting data in transit from eavesdropping and man-in-the-middle attacks.
 - **Security Headers**: HTTP security headers such as Content Security Policy (CSP), X-Content-Type-Options, and X-Frame-Options are used to protect against common web vulnerabilities.
 - **Regular Security Audits**: Regular security audits and code reviews are conducted to identify and mitigate potential security risks.
+
+## Bug Fixes
+
+| **Bug** | **Fix** |
+| ------- | ------- |
+| Password reset token was not invalidating after use | Updated the password reset process to correctly mark tokens as used after a successful password reset |
+| API endpoints not returning detailed error messages | Enhanced error handling to provide more informative error messages from API endpoints |
+| Missing CSRF token error during user registration | Ensured that CSRF tokens are correctly included in user registration forms and API requests |
+| Incorrect stock data import due to API rate limits | Implemented rate limiting and retry logic to handle API rate limits during stock data import |
+| User follow/unfollow action was not updating the UI | Added real-time updates to the UI when users follow or unfollow stocks |
+| Notes not saving user information correctly | Fixed the note creation process to correctly associate notes with the authenticated user |
+| Pagination issues in the dividend data list view | Corrected pagination logic to properly paginate dividend data results |
+| Logo image URL was not being stored correctly for stocks | Modified the stock update function to correctly handle and store logo URLs |
+| User email verification link not working | Updated the email verification process to correctly handle and validate verification tokens |
+| Google sign-in failing for some users | Fixed the Google sign-in process to handle various edge cases and errors during authentication |
+| Stock search functionality not filtering results properly | Improved the stock search algorithm to accurately filter results based on user queries |
+| Highlight data not displaying correctly on stock detail view | Corrected the data serialization to ensure highlight data is displayed correctly on the stock detail page |
+
+
+
+## Database Indexing
+
+The column for the stock `uid` and `name` have been indexed to improve search result speeds.
+
+
+## Heroku Deployment
+
+For the official Heroku deployment documentation, please visit [here](https://devcenter.heroku.com/articles/git).
+
+### Step One
+
+Make sure your GitHub repo for the build is up to date. You will be automatically deploying the latest code from your GitHub repo. Items to confirm:
+
+- Your `requirements.txt` file contains all the dependencies needed for the project. Run `pip freeze > requirements.txt` in the terminal if unsure.
+- You have migrated all changes to the database before deploying. Run `python manage.py makemigrations` and `python manage.py migrate` in the terminal.
+- Check all passwords and other sensitive information are stored in a `.env` file and are called throughout the build as environment variables, not hardcoded anywhere.
+- You have a `Procfile` in the root of the project with the following content: `web: gunicorn djangostocks.wsgi`.
+- You are connected to an external Postgres database and have the necessary environment variables set in the `settings.py` file for connecting to it. This build is using a Serverless Postgres DB hosted at www.neon.tech.
+- Ensure debug is set to `FALSE` in the `settings.py` file.
+
+### Step Two
+
+Visit [Heroku](https://id.heroku.com/login) and log in. If you do not have an account, create one.
+
+
+### Step Three
+
+Create a new app, choose a name, and select the region closest to where the majority of your users are located.
+
+
+### Step Four
+
+Within the new app, go to the Settings tab and navigate to Config Vars. Add the necessary environment variables from the `.env` file here.
+
+### Step Five
+
+Next, go to the "Deploy" tab. Click on "Connect to GitHub" and select your repo. Click on "Enable Automatic Deploys" and then "Deploy Branch".
+
+
+### Step Six
+
+Monitor logs
+
+The application will then attempt to build and deploy using the GitHub source code. You can monitor the logs by going to the "More" tab in the top right and clicking on "View logs". If it fails for any reason, you will be able to debug from there.
+
+
+## Forking the GitHub Repository
+
+1. Go to the GitHub repository https://github.com/ouzifeng/CI_PP5_API
+2. Click on Fork button in the top right corner.
+3. You will then have a copy of the repository in your own GitHub account.
+
+## Making a Local Clone
+
+1. Go to the GitHub repository.
+2. Locate the Code button above the list of files and click it.
+3. Highlight the "HTTPS" button to clone with HTTPS and copy the link.
+4. Open Git Bash.
+5. Change the current working directory to the one where you want the cloned directory.
+6. Type `git clone` and paste the URL from the clipboard (`$ git clone https://github.com/ouzifeng/CI_PP5_API`).
+7. Press Enter to create your local clone.
+
+## Credits
+
+### Images
+
+Images used were sourced from www.exampleimages.com.
+
+### Code
+
+- Django REST Framework is used for building the API.
+- Heroku is used for deployment.
+- PostgreSQL is used as the database.
+- Git and GitHub are used for version control.
+
+
+## Acknowledgements
+
+### Special thanks to the following:
+- My Mentor Mo Shami

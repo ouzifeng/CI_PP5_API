@@ -205,7 +205,6 @@ class DividendDataListView(generics.ListAPIView):
                 description="Maximum P/E ratio",
                 type=openapi.TYPE_NUMBER
             ),
-
         ],
         responses={200: DividendSerializer(many=True)}
     )
@@ -233,5 +232,7 @@ class DividendDataListView(generics.ListAPIView):
                 highlights__pe_ratio__gte=float(min_pe),
                 highlights__pe_ratio__lte=float(max_pe)
             )
+
+        queryset = queryset.order_by('-highlights__dividend_yield')
 
         return queryset
