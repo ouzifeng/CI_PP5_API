@@ -12,7 +12,7 @@ To this end, the platform needs to focus on 3 areas:
 2. Individual stock pages where a breakdown of the companies fundamental performance can be tracked
 3. An investment note taking feature. As users perform the necessary financial due diligence, it is important that they can take notes of their findings, and be able to edit and delete them. They must be easily accessible as they are often copied and shared in memos internally
 
-The project is split into a react based frontend which can be found [here](https://www.sellyourtackle.co.uk/). This depository is dedicated to the backend, which has been built using Django's Rest Framework
+The project is split into a react based frontend which can be found [here](https://github.com/ouzifeng/CI_PP5_React_StockAnalysis/). This depository is dedicated to the backend, which has been built using Django's Rest Framework
 
 
 ## Features
@@ -59,7 +59,7 @@ def import_tickers(api_token, exchange='LSE'):
     )
     response = requests.get(ticker_url)
 
-By swapping 'LSE' to a different exchange. A list of exhcnages can be found [here](https://eodhd.com/list-of-stock-markets):
+By swapping 'LSE' to a different exchange. A list of exchanges can be found [here](https://eodhd.com/list-of-stock-markets):
 
 ### Challenge 2 - Removing Non-common Stocks
 
@@ -100,16 +100,14 @@ This management command works out the 5 year CAGR for important income statement
 
 ### 4. Stock Prices
 
-Company fundamental data does not change on a daily basis, but stock prices do. The fundamental data api has a strict daily limit of 10k companies, however the stock prices API allows a whole exchanges stock prices to be downloaded for just 1,000 requests. The stock_prices command imports all sotck prices across all exchanges, and can be setup to run as a cronjob daily
+Company fundamental data does not change on a daily basis, but stock prices do. The fundamental data api has a strict daily limit of 10k companies, however the stock prices API allows a whole exchanges stock prices to be downloaded for just 1,000 requests. The stock_prices command imports all stock prices across all exchanges, and can be setup to run as a cronjob daily
 
-## Design Process
-
-The design process was based on user stories derived from the frontend build, these can be found [here](hesererer):
-
+These command files can be set to run as cronjobs, and it is recommended to run them once a month, apart from the stock prices which shouldbe run daily around 1am CET.
 
 ## User Stories
 
-For the API side of the project I created a separate set of user stories, written from the perspective of a developer consuming the API. The API User Stories can be found here: Sonic Explorers API User Stories
+The user stories have been built from a frontend user story point of view, and these can be found on the frontend documentation [here](https://github.com/ouzifeng/CI_PP5_React_StockAnalysis). The backend has been designed to support the necessary functionality required from the frontend user stories.
+
 
 # Structure
 
@@ -932,9 +930,9 @@ The application will then attempt to build and deploy using the GitHub source co
 
 ## Credits
 
-### Images
+### Stock Data
 
-Images used were sourced from www.exampleimages.com.
+Stock have been sourced from EODHD 
 
 ### Code
 
