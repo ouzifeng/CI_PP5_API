@@ -25,7 +25,6 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-CORS_ORIGIN_ALLOW_ALL = True
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
@@ -45,8 +44,11 @@ CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:3000',
 ]
 
-# Application definition
+# CSRF Cookie Settings
+CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SECURE = False
 
+# Application definition
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -67,14 +69,6 @@ INSTALLED_APPS = [
     'drf_yasg',  
 ]
 
-# Authentication Backends
-AUTHENTICATION_CLASSES = (
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
-    'dj_rest_auth.authentication.AllAuthJWTAuthentication',    
-)
-
-
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
@@ -84,8 +78,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "allauth.account.middleware.AccountMiddleware",    
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -106,7 +99,6 @@ TEMPLATES = [
     },
 ]
 
-SITE_NAME = "Bull Streets"
 WSGI_APPLICATION = "config.wsgi.application"
 
 
