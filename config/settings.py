@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-)y@mi)6%jul=wb+6asjrg-nmc519@%&qd0c#k6zkdul_+l=cq3"
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -30,6 +30,19 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     'django-stocks-ecbc6bc5e208.herokuapp.com',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://django-stocks-ecbc6bc5e208.herokuapp.com',
+    'https://stocks-frontend-d56c65a3a165.herokuapp.com',
+]
+
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    'https://stocks-frontend-d56c65a3a165.herokuapp.com',
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
 ]
 
 # Application definition
