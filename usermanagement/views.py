@@ -20,6 +20,7 @@ from .models import CustomUser
 
 User = get_user_model()
 
+
 class LoginView(APIView):
     permission_classes = [AllowAny]
 
@@ -38,27 +39,26 @@ class LoginView(APIView):
         }
     )
     def post(self, request):
+        """
+        Handles user login.
+        """
         email = request.data.get('email')
         password = request.data.get('password')
 
-        # Map email to username for authentication
         username = email
-
-        print(f"Attempting to authenticate user with email: {email}")
 
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
-            print(f"Authenticated user: {user.email}")
             login(request, user)
             token, created = Token.objects.get_or_create(user=user)
             return Response({'token': token.key}, status=status.HTTP_200_OK)
         else:
-            print("Authentication failed")
             return Response(
-                {'non_field_errors': ['Unable to log in with provided credentials.']},
+                {'non_field_errors': ['Unable to log in using credentials.']},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
 
 class CustomUserCreate(APIView):
     permission_classes = [AllowAny]
@@ -72,9 +72,13 @@ class CustomUserCreate(APIView):
         }
     )
     def post(self, request):
+        """
+        Creates a new user with email verification.
+        """
         reg_serializer = CustomUserSerializer(data=request.data)
         if reg_serializer.is_valid():
-            reg_serializer.validated_data['username'] = reg_serializer.validated_data['email']
+            validated_data = reg_serializer.validated_data
+            validated_data['username'] = validated_data['email']
             new_user = reg_serializer.save(is_active=False)
             if new_user:
                 send_verification_email(new_user, request)
@@ -82,6 +86,7 @@ class CustomUserCreate(APIView):
         return Response(
             reg_serializer.errors, status=status.HTTP_400_BAD_REQUEST
         )
+
 
 @swagger_auto_schema(
     method='post',
@@ -101,6 +106,9 @@ class CustomUserCreate(APIView):
 )
 @api_view(['POST'])
 def send_contact_email(request):
+    """
+    Sends a contact email.
+    """
     name = request.data.get('name')
     from_email = request.data.get('email')
     message = request.data.get('message')
@@ -141,6 +149,9 @@ def send_contact_email(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def custom_password_reset_request(request):
+    """
+    Initiates a request for password reset.
+    """
     email = request.data.get('email')
     if email:
         try:
@@ -181,6 +192,9 @@ def custom_password_reset_request(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def password_reset_confirm(request):
+    """
+    Confirms password reset request.
+    """
     try:
         uidb64 = request.data.get('uid')
         token = request.data.get('token')
@@ -240,6 +254,9 @@ def password_reset_confirm(request):
 )
 @api_view(['GET'])
 def verify_email(request, uidb64, token):
+    """
+    Verifies user's email address.
+    """
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = CustomUser.objects.get(pk=uid)
@@ -294,6 +311,9 @@ class GoogleSignIn(APIView):
         }
     )
     def post(self, request):
+        """
+        Handles user sign in using Google OAuth.
+        """
         token = request.data.get('token')
         try:
             idinfo = id_token.verify_oauth2_token(

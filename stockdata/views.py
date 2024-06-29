@@ -15,6 +15,11 @@ from rest_framework.pagination import PageNumberPagination
 
 
 class StockDetailView(generics.RetrieveAPIView):
+    """
+    Retrieves details of a stock identified by 'uid'. Checks if the
+    requesting user is authenticated
+    and adds information about whether the user is following the stock.
+    """
     queryset = General.objects.all()
     serializer_class = GeneralSerializer
     lookup_field = 'uid'
@@ -53,6 +58,10 @@ class StockDetailView(generics.RetrieveAPIView):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def toggle_follow_stock(request, uid):
+    """
+    Toggles the follow/unfollow status of a stock identified by 'uid'
+    for the authenticated user.
+    """
     try:
         stock = General.objects.get(uid=uid)
     except General.DoesNotExist:
@@ -76,6 +85,10 @@ def toggle_follow_stock(request, uid):
 
 
 class NoteListCreate(generics.ListCreateAPIView):
+    """
+    Lists and creates notes. Requires authentication to create notes,
+    associating them with the requesting user.
+    """
     queryset = Note.objects.all()
     serializer_class = NoteSerializer
     permission_classes = [IsAuthenticated]
@@ -86,11 +99,20 @@ class NoteListCreate(generics.ListCreateAPIView):
         request_body=NoteSerializer
     )
     def perform_create(self, serializer):
+        """
+        Performs creation of a new note. Associates
+        the note with the requesting user.
+        """
         print("Received data for new note:", serializer.validated_data)
         serializer.save(user=self.request.user)
 
 
 class NoteDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Retrieves, updates, or deletes a specific note identified by its ID.
+    Requires authentication and ensures only the owner of the note
+    can update or delete it.
+    """
     queryset = Note.objects.all()
     serializer_class = NoteSerializer
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
@@ -119,6 +141,9 @@ class NoteDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class FollowedStocksView(generics.ListAPIView):
+    """
+    Lists all stocks followed by the authenticated user.
+    """
     serializer_class = GeneralSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -127,11 +152,18 @@ class FollowedStocksView(generics.ListAPIView):
         responses={200: GeneralSerializer(many=True)}
     )
     def get_queryset(self):
+        """
+        Returns queryset of stocks followed by the authenticated user.
+        """
         user = self.request.user
         return General.objects.filter(followers=user)
 
 
 class StockSearchView(generics.ListAPIView):
+    """
+    Lists stocks based on search criteria (code or name).
+    Allows read-only access for unauthenticated users.
+    """
     serializer_class = StockSearchSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
@@ -146,6 +178,10 @@ class StockSearchView(generics.ListAPIView):
         responses={200: StockSearchSerializer(many=True)}
     )
     def get_queryset(self):
+        """
+        Returns queryset of stocks filtered by 'query' parameter
+        in request query parameters.
+        """
         queryset = General.objects.all()
         query = self.request.query_params.get('query', None)
         if query is not None:
@@ -162,6 +198,11 @@ class StandardResultsSetPagination(PageNumberPagination):
 
 
 class DividendDataListView(generics.ListAPIView):
+    """
+    Lists dividend data with optional filtering by
+    dividend yield, payout ratio, and P/E ratio.
+    Allows read-only access for unauthenticated users.
+    """
     serializer_class = DividendSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     pagination_class = StandardResultsSetPagination
@@ -209,6 +250,11 @@ class DividendDataListView(generics.ListAPIView):
         responses={200: DividendSerializer(many=True)}
     )
     def get_queryset(self):
+        """
+        Returns queryset of General objects filtered by
+        dividend yield, payout ratio, and P/E ratio
+        using query parameters from the request.
+        """
         min_yield = self.request.query_params.get('min_dividend_yield')
         max_yield = self.request.query_params.get('max_dividend_yield')
         min_payout = self.request.query_params.get('min_payout_ratio')
